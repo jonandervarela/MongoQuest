@@ -31,6 +31,10 @@ public class VentanaMenuEmpleado {
         Button botonTemario =
                 new Button("Consultar temario");
 
+        // NUEVO BOTÓN DE ENTREGAS
+        Button botonEntregas =
+                new Button("Revisar entregas de alumnos");
+
         Button botonSalir =
                 new Button("Cerrar sesión");
 
@@ -46,6 +50,11 @@ public class VentanaMenuEmpleado {
                 new VentanaTemarioUsuario().mostrar()
         );
 
+        // ABRIR GESTIÓN DE ENTREGAS
+        botonEntregas.setOnAction(e ->
+                new VentanaEntregas().show()
+        );
+
         botonSalir.setOnAction(e -> ventana.close());
 
         VBox contenido = new VBox(
@@ -54,13 +63,14 @@ public class VentanaMenuEmpleado {
                 botonActividades,
                 botonTareas,
                 botonTemario,
+                botonEntregas,
                 botonSalir
         );
 
         contenido.setAlignment(Pos.CENTER);
         contenido.setPadding(new Insets(30));
 
-        Scene escena = new Scene(contenido, 500, 450);
+        Scene escena = new Scene(contenido, 500, 500);
 
         ventana.setTitle("Academy - Empleado");
         ventana.setScene(escena);

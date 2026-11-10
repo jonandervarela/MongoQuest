@@ -69,6 +69,7 @@ com\mycompany\reto1_erandio_academy\vista\VentanaMenuAdministrador.class
 com\mycompany\reto1_erandio_academy\servicio\LogServicio.class
 com\mycompany\reto1_erandio_academy\dao\TareaDAO.class
 com\mycompany\reto1_erandio_academy\servicio\TareaServicio.class
+com\mycompany\reto1_erandio_academy\vista\VentanaEntregas.class
 com\mycompany\reto1_erandio_academy\vista\VentanaPerfilUsuario.class
 com\mycompany\reto1_erandio_academy\vista\VentanaValoraciones.class
 com\mycompany\reto1_erandio_academy\servicio\MatriculaServicio.class

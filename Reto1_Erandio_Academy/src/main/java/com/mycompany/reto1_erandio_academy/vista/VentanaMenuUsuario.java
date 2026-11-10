@@ -27,6 +27,10 @@ public class VentanaMenuUsuario {
         Button botonPerfil = new Button("Actualizar mi perfil");
         Button botonValoraciones = new Button("Valorar cursos");
         Button botonMatriculas = new Button("Consultar mis matrículas");
+
+        // NUEVO BOTÓN
+        Button botonEntregas = new Button("Mis tareas y entregas");
+
         Button botonBaja = new Button("Darme de baja de un curso");
         Button botonEliminar = new Button("Eliminar mi cuenta");
         Button botonSalir = new Button("Cerrar sesión");
@@ -45,6 +49,11 @@ public class VentanaMenuUsuario {
 
         botonMatriculas.setOnAction(e ->
                 new VentanaMatriculas().mostrar()
+        );
+
+        // ABRIR VENTANA DE ENTREGAS
+        botonEntregas.setOnAction(e ->
+                new VentanaEntregas().show()
         );
 
         botonBaja.setOnAction(e ->
@@ -68,6 +77,7 @@ public class VentanaMenuUsuario {
                 botonPerfil,
                 botonValoraciones,
                 botonMatriculas,
+                botonEntregas,
                 botonBaja,
                 botonEliminar,
                 botonSalir
@@ -76,7 +86,7 @@ public class VentanaMenuUsuario {
         contenido.setAlignment(Pos.CENTER);
         contenido.setPadding(new Insets(30));
 
-        Scene escena = new Scene(contenido, 500, 550);
+        Scene escena = new Scene(contenido, 500, 620);
 
         ventana.setTitle("Academy - Usuario");
         ventana.setScene(escena);
