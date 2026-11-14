@@ -1,4 +1,3 @@
-
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -59,7 +58,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>com.mycompany.reto1_erandio_academy.vista.VentanaEmpleados</mainClass>
+                    <mainClass>com.mycompany.reto1_erandio_academy.Reto1_Erandio_Academy</mainClass>
                 </configuration>
             </plugin>
 

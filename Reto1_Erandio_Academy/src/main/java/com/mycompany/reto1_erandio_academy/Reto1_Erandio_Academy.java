@@ -4,13 +4,11 @@
 
 package com.mycompany.reto1_erandio_academy;
 
-/**
- *
- * @author Anurag
- */
+import javafx.application.Application;
+
 public class Reto1_Erandio_Academy {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        Application.launch(AppLogin.class, args);
     }
 }

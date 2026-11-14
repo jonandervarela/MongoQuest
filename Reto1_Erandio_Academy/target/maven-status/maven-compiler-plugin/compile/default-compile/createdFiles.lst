@@ -58,6 +58,7 @@ com\mycompany\reto1_erandio_academy\servicio\ExportarExcel.class
 com\mycompany\reto1_erandio_academy\vista\VentanaRegistroUsuario.class
 com\mycompany\reto1_erandio_academy\vista\VentanaTemarioUsuario$2.class
 com\mycompany\reto1_erandio_academy\servicio\EntregaServicio.class
+com\mycompany\reto1_erandio_academy\AppLogin.class
 com\mycompany\reto1_erandio_academy\vista\VentanaCursos.class
 com\mycompany\reto1_erandio_academy\vista\VentanaEliminarCuenta$1.class
 com\mycompany\reto1_erandio_academy\vista\VentanaMatriculas$4.class

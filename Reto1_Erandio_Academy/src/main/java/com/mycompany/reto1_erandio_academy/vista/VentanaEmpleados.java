@@ -169,7 +169,4 @@ public class VentanaEmpleados extends Application {
         escenario.show();
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
 }
