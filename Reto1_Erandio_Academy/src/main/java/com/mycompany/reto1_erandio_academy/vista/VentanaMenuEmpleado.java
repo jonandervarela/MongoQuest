@@ -52,12 +52,16 @@ public class VentanaMenuEmpleado {
         Button botonActividades = crearBoton("Gestionar actividades", AZUL);
         Button botonTareas = crearBoton("Gestionar tareas", AZUL);
         Button botonTemario = crearBoton("Consultar temario", AZUL);
+        Button botonAlumnos = crearBoton("Consultar alumnos", AZUL);
+        Button botonPerfil = crearBoton("Mi perfil", AZUL);
         Button botonSalir = crearBoton("Cerrar sesión", GRIS);
 
         // ACCIONES
         botonActividades.setOnAction(e -> new VentanaActividades().mostrar());
         botonTareas.setOnAction(e -> new VentanaTareas().mostrar());
         botonTemario.setOnAction(e -> new VentanaTemarioUsuario().mostrar());
+        botonAlumnos.setOnAction(e -> new VentanaConsultarAlumnos().mostrar());
+        botonPerfil.setOnAction(e -> new VentanaPerfilEmpleado().mostrar());
 
         botonSalir.setOnAction(e -> {
             SesionUsuario.cerrarSesion();
@@ -71,6 +75,8 @@ public class VentanaMenuEmpleado {
                 botonActividades,
                 botonTareas,
                 botonTemario,
+                botonAlumnos,
+                botonPerfil,
                 botonSalir
         );
 
