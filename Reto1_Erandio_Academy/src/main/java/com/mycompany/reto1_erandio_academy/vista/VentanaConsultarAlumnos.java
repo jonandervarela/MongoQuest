@@ -148,6 +148,7 @@ public class VentanaConsultarAlumnos {
                 etiquetaValoracion
         );
         contenido.setPadding(new Insets(20));
+        contenido.setStyle("-fx-background-color: #F2F5F7;");
 
         if (cursosPermitidos.isEmpty()) {
             contenido.getChildren().add(0, new Label(

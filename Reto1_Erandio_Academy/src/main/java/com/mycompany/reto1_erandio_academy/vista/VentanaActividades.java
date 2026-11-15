@@ -121,6 +121,11 @@ public class VentanaActividades {
         Button eliminar = new Button("Eliminar actividad");
         Button actualizar = new Button("Actualizar lista");
 
+        estiloBoton(nuevo, AZUL);
+        estiloBoton(modificar, AZUL);
+        estiloBoton(eliminar, ROJO);
+        estiloBoton(actualizar, AZUL);
+
         // Si no hay ningún curso disponible, no tiene sentido crear nada
         if (cursosPermitidos.isEmpty()) {
             nuevo.setDisable(true);
@@ -300,6 +305,7 @@ public class VentanaActividades {
         );
 
         contenido.setPadding(new Insets(20));
+        contenido.setStyle("-fx-background-color: #F2F5F7;");
 
         // NUEVO: aviso si el profesor no tiene ningún curso asignado
         if (esEmpleado() && cursosPermitidos.isEmpty()) {
@@ -398,6 +404,7 @@ public class VentanaActividades {
         nuevaPregunta.setPromptText("Pregunta del ejercicio");
 
         Button anadir = new Button("Añadir");
+        estiloBoton(anadir, AZUL);
         anadir.setOnAction(e -> {
 
             String texto = nuevaPregunta.getText().trim();
@@ -409,6 +416,7 @@ public class VentanaActividades {
         });
 
         Button quitar = new Button("Quitar seleccionado");
+        estiloBoton(quitar, ROJO);
         quitar.setOnAction(e -> {
 
             Ejercicio seleccionado =
@@ -461,5 +469,37 @@ public class VentanaActividades {
         alerta.setHeaderText(null);
         alerta.setContentText(mensaje);
         alerta.showAndWait();
+    }
+
+    // ---------- Estilo visual (misma técnica que el resto de la app) ----------
+    private static final String AZUL = "#1F6F8B";
+    private static final String ROJO = "#B3382C";
+
+    private void estiloBoton(Button boton, String colorAcento) {
+
+        String base =
+                "-fx-background-color: white;"
+                + "-fx-text-fill: #12283A;"
+                + "-fx-font-size: 13px;"
+                + "-fx-font-weight: bold;"
+                + "-fx-background-radius: 8;"
+                + "-fx-border-color: #D5DDE3;"
+                + "-fx-border-radius: 8;"
+                + "-fx-cursor: hand;"
+                + "-fx-padding: 8 16 8 16;";
+
+        String encima =
+                "-fx-background-color: " + colorAcento + ";"
+                + "-fx-text-fill: white;"
+                + "-fx-font-size: 13px;"
+                + "-fx-font-weight: bold;"
+                + "-fx-background-radius: 8;"
+                + "-fx-border-radius: 8;"
+                + "-fx-cursor: hand;"
+                + "-fx-padding: 8 16 8 16;";
+
+        boton.setStyle(base);
+        boton.setOnMouseEntered(e -> boton.setStyle(encima));
+        boton.setOnMouseExited(e -> boton.setStyle(base));
     }
 }

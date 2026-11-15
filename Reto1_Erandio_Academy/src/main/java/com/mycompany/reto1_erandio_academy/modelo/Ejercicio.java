@@ -1,14 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.reto1_erandio_academy.modelo;
 
 /**
- *
- * @author jonan
+ * Ejercicio embebido dentro de una Actividad (Tema).
+ * Solo lleva la pregunta, que es el único campo que exige
+ * el validador de MongoDB para la colección "actividades".
  */
-
 public class Ejercicio {
 
     private String pregunta;
@@ -34,4 +30,3 @@ public class Ejercicio {
         return pregunta;
     }
 }
-

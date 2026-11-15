@@ -82,4 +82,3 @@ public class Matricula {
         this.progreso = progreso;
     }
 }
-

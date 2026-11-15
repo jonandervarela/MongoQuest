@@ -65,6 +65,7 @@ public class VentanaPerfilEmpleado {
         campoTelefono = new TextField(usuarioActual.getTelefono());
 
         Button botonActualizar = new Button("Actualizar mis datos");
+        estiloBoton(botonActualizar);
         botonActualizar.setOnAction(e -> actualizarPerfil());
 
         // ---------- Datos de la ficha de empleado (solo consulta) ----------
@@ -85,6 +86,7 @@ public class VentanaPerfilEmpleado {
         );
 
         contenido.setPadding(new Insets(25));
+        contenido.setStyle("-fx-background-color: #F2F5F7;");
 
         ventana.setTitle("Academy - Mi perfil");
         ventana.setScene(new Scene(contenido, 450, 560));
@@ -202,5 +204,34 @@ public class VentanaPerfilEmpleado {
         alerta.setHeaderText(null);
         alerta.setContentText(mensaje);
         alerta.showAndWait();
+    }
+
+    // ---------- Estilo visual (misma técnica que el resto de la app) ----------
+    private void estiloBoton(Button boton) {
+
+        String base =
+                "-fx-background-color: white;"
+                + "-fx-text-fill: #12283A;"
+                + "-fx-font-size: 13px;"
+                + "-fx-font-weight: bold;"
+                + "-fx-background-radius: 8;"
+                + "-fx-border-color: #D5DDE3;"
+                + "-fx-border-radius: 8;"
+                + "-fx-cursor: hand;"
+                + "-fx-padding: 8 16 8 16;";
+
+        String encima =
+                "-fx-background-color: #1F6F8B;"
+                + "-fx-text-fill: white;"
+                + "-fx-font-size: 13px;"
+                + "-fx-font-weight: bold;"
+                + "-fx-background-radius: 8;"
+                + "-fx-border-radius: 8;"
+                + "-fx-cursor: hand;"
+                + "-fx-padding: 8 16 8 16;";
+
+        boton.setStyle(base);
+        boton.setOnMouseEntered(e -> boton.setStyle(encima));
+        boton.setOnMouseExited(e -> boton.setStyle(base));
     }
 }
