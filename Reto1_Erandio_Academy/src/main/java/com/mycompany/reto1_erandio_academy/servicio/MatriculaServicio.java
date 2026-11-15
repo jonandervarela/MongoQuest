@@ -1,50 +1,36 @@
-
 package com.mycompany.reto1_erandio_academy.servicio;
 
 import com.mycompany.reto1_erandio_academy.dao.MatriculaDAO;
 import com.mycompany.reto1_erandio_academy.modelo.Matricula;
 
-import java.time.LocalDate;
-import java.util.List;
-
 import org.bson.types.ObjectId;
+
+import java.util.List;
 
 public class MatriculaServicio {
 
     private final MatriculaDAO matriculaDAO;
 
-    // Constructor
     public MatriculaServicio() {
         matriculaDAO = new MatriculaDAO();
     }
 
-    // Registrar matrícula
+    // Matricular a un alumno en un curso
     public void matricular(ObjectId usuarioId, ObjectId cursoId) {
 
-        // Comprobar usuario
-        if (usuarioId == null) {
+        if (usuarioId == null || cursoId == null) {
             throw new IllegalArgumentException(
-                    "El usuario es obligatorio.");
+                    "Faltan datos para matricularse.");
         }
 
-        // Comprobar curso
-        if (cursoId == null) {
-            throw new IllegalArgumentException(
-                    "El curso es obligatorio.");
-        }
-
-        // Evitar matrículas duplicadas
         if (matriculaDAO.existeMatricula(usuarioId, cursoId)) {
             throw new IllegalArgumentException(
                     "Ya estás matriculado en este curso.");
         }
 
-        // Crear matrícula
         Matricula matricula = new Matricula(
-                null,
-                usuarioId,
-                cursoId,
-                LocalDate.now().toString(),
+                null, usuarioId, cursoId,
+                java.time.LocalDate.now().toString(),
                 "ACTIVA"
         );
 
@@ -61,13 +47,24 @@ public class MatriculaServicio {
 
         if (usuarioId == null) {
             throw new IllegalArgumentException(
-                    "El usuario es obligatorio.");
+                    "El usuario no es válido.");
         }
 
         return matriculaDAO.listarPorUsuario(usuarioId);
     }
 
-    // Dar de baja una matrícula
+    // NUEVO: listar matrículas (alumnos) de un curso
+    public List<Matricula> listarPorCurso(ObjectId cursoId) {
+
+        if (cursoId == null) {
+            throw new IllegalArgumentException(
+                    "Debes seleccionar un curso.");
+        }
+
+        return matriculaDAO.listarPorCurso(cursoId);
+    }
+
+    // Eliminar matrícula (darse de baja)
     public boolean eliminar(ObjectId id) {
 
         if (id == null) {

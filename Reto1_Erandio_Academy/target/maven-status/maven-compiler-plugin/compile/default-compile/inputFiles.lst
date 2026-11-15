@@ -16,6 +16,7 @@ C:\TARTANGA\2DAM\RetoMongoQuest\Reto1_Erandio_Academy\src\main\java\com\mycompan
 C:\TARTANGA\2DAM\RetoMongoQuest\Reto1_Erandio_Academy\src\main\java\com\mycompany\reto1_erandio_academy\InsertarDatosPrueba.java
 C:\TARTANGA\2DAM\RetoMongoQuest\Reto1_Erandio_Academy\src\main\java\com\mycompany\reto1_erandio_academy\modelo\Actividad.java
 C:\TARTANGA\2DAM\RetoMongoQuest\Reto1_Erandio_Academy\src\main\java\com\mycompany\reto1_erandio_academy\modelo\Curso.java
+C:\TARTANGA\2DAM\RetoMongoQuest\Reto1_Erandio_Academy\src\main\java\com\mycompany\reto1_erandio_academy\modelo\Ejercicio.java
 C:\TARTANGA\2DAM\RetoMongoQuest\Reto1_Erandio_Academy\src\main\java\com\mycompany\reto1_erandio_academy\modelo\Empleado.java
 C:\TARTANGA\2DAM\RetoMongoQuest\Reto1_Erandio_Academy\src\main\java\com\mycompany\reto1_erandio_academy\modelo\Empresa.java
 C:\TARTANGA\2DAM\RetoMongoQuest\Reto1_Erandio_Academy\src\main\java\com\mycompany\reto1_erandio_academy\modelo\Entrega.java
@@ -42,6 +43,7 @@ C:\TARTANGA\2DAM\RetoMongoQuest\Reto1_Erandio_Academy\src\main\java\com\mycompan
 C:\TARTANGA\2DAM\RetoMongoQuest\Reto1_Erandio_Academy\src\main\java\com\mycompany\reto1_erandio_academy\vista\VentanaActividades.java
 C:\TARTANGA\2DAM\RetoMongoQuest\Reto1_Erandio_Academy\src\main\java\com\mycompany\reto1_erandio_academy\vista\VentanaAsignaciones.java
 C:\TARTANGA\2DAM\RetoMongoQuest\Reto1_Erandio_Academy\src\main\java\com\mycompany\reto1_erandio_academy\vista\VentanaBajaMatricula.java
+C:\TARTANGA\2DAM\RetoMongoQuest\Reto1_Erandio_Academy\src\main\java\com\mycompany\reto1_erandio_academy\vista\VentanaConsultarAlumnos.java
 C:\TARTANGA\2DAM\RetoMongoQuest\Reto1_Erandio_Academy\src\main\java\com\mycompany\reto1_erandio_academy\vista\VentanaCursos.java
 C:\TARTANGA\2DAM\RetoMongoQuest\Reto1_Erandio_Academy\src\main\java\com\mycompany\reto1_erandio_academy\vista\VentanaEliminarCuenta.java
 C:\TARTANGA\2DAM\RetoMongoQuest\Reto1_Erandio_Academy\src\main\java\com\mycompany\reto1_erandio_academy\vista\VentanaEmpleados.java
@@ -54,6 +56,7 @@ C:\TARTANGA\2DAM\RetoMongoQuest\Reto1_Erandio_Academy\src\main\java\com\mycompan
 C:\TARTANGA\2DAM\RetoMongoQuest\Reto1_Erandio_Academy\src\main\java\com\mycompany\reto1_erandio_academy\vista\VentanaMenuEmpleado.java
 C:\TARTANGA\2DAM\RetoMongoQuest\Reto1_Erandio_Academy\src\main\java\com\mycompany\reto1_erandio_academy\vista\VentanaMenuUsuario.java
 C:\TARTANGA\2DAM\RetoMongoQuest\Reto1_Erandio_Academy\src\main\java\com\mycompany\reto1_erandio_academy\vista\VentanaNuevoEmpleado.java
+C:\TARTANGA\2DAM\RetoMongoQuest\Reto1_Erandio_Academy\src\main\java\com\mycompany\reto1_erandio_academy\vista\VentanaPerfilEmpleado.java
 C:\TARTANGA\2DAM\RetoMongoQuest\Reto1_Erandio_Academy\src\main\java\com\mycompany\reto1_erandio_academy\vista\VentanaPerfilUsuario.java
 C:\TARTANGA\2DAM\RetoMongoQuest\Reto1_Erandio_Academy\src\main\java\com\mycompany\reto1_erandio_academy\vista\VentanaRegistroUsuario.java
 C:\TARTANGA\2DAM\RetoMongoQuest\Reto1_Erandio_Academy\src\main\java\com\mycompany\reto1_erandio_academy\vista\VentanaTareas.java

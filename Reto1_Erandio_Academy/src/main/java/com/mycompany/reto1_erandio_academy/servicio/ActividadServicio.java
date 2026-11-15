@@ -1,8 +1,8 @@
-
 package com.mycompany.reto1_erandio_academy.servicio;
 
 import com.mycompany.reto1_erandio_academy.dao.ActividadDAO;
 import com.mycompany.reto1_erandio_academy.modelo.Actividad;
+import com.mycompany.reto1_erandio_academy.modelo.Ejercicio;
 
 import java.util.List;
 import org.bson.types.ObjectId;
@@ -98,6 +98,20 @@ public class ActividadServicio {
         if (actividad.getCursoId() == null) {
             throw new IllegalArgumentException(
                     "Debes seleccionar un curso.");
+        }
+
+        // NUEVO: cada ejercicio debe tener una pregunta no vacía
+        if (actividad.getEjercicios() != null) {
+
+            for (Ejercicio ejercicio : actividad.getEjercicios()) {
+
+                if (ejercicio.getPregunta() == null
+                        || ejercicio.getPregunta().isBlank()) {
+
+                    throw new IllegalArgumentException(
+                            "Hay un ejercicio sin pregunta.");
+                }
+            }
         }
     }
 
