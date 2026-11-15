@@ -8,23 +8,39 @@ import com.mycompany.reto1_erandio_academy.servicio.ActividadServicio;
 import com.mycompany.reto1_erandio_academy.servicio.LogServicio;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.util.Optional;
 
 public class VentanaActividades {
 
-    private final ActividadServicio servicio = new ActividadServicio();
-    private final CursoDAO cursoDAO = new CursoDAO();
+    private final ActividadServicio servicio =
+            new ActividadServicio();
 
-    private final TableView<Actividad> tabla = new TableView<>();
+    private final CursoDAO cursoDAO =
+            new CursoDAO();
 
-    // REGISTRAR LOG EN MONGODB
+    private final TableView<Actividad> tabla =
+            new TableView<>();
+
+    private final String AZUL_OSCURO = "#12283A";
+    private final String AZUL = "#1F6F8B";
+    private final String FONDO = "#F2F5F7";
+    private final String GRIS = "#64748B";
+
+    // ==========================================
+    // REGISTRAR LOG
+    // ==========================================
+
     private void registrarLog(
             String operacion,
             String resultado,
@@ -43,176 +59,378 @@ public class VentanaActividades {
         }
     }
 
+    // ==========================================
+    // MOSTRAR VENTANA
+    // ==========================================
+
     public void mostrar() {
 
         Stage ventana = new Stage();
-        ventana.setTitle("Academy - Gestión de actividades");
+
+        ventana.setTitle(
+                "Erandio Academy - Gestión de actividades");
+
+        // ==========================================
+        // LISTA DE ACTIVIDADES
+        // ==========================================
+
+        ObservableList<Actividad> datosActividades =
+                FXCollections.observableArrayList();
+
+        FilteredList<Actividad> actividadesFiltradas =
+                new FilteredList<>(datosActividades, a -> true);
+
+        tabla.setItems(actividadesFiltradas);
+
+        tabla.setColumnResizePolicy(
+                TableView.CONSTRAINED_RESIZE_POLICY);
+
+        tabla.setPlaceholder(
+                new Label("Selecciona un curso para ver sus actividades."));
+
+        // ==========================================
+        // SELECTOR DE CURSOS
+        // ==========================================
 
         ComboBox<Curso> cursos = new ComboBox<>();
 
         cursos.setPromptText("Selecciona un curso");
+        cursos.setMaxWidth(Double.MAX_VALUE);
+        cursos.setPrefHeight(42);
 
         cursos.setItems(
-                FXCollections.observableArrayList(cursoDAO.listar())
-        );
+                FXCollections.observableArrayList(
+                        cursoDAO.listar()));
 
-        cursos.setCellFactory(lista -> new ListCell<Curso>() {
+        cursos.setCellFactory(lista ->
+                new ListCell<Curso>() {
+
             @Override
-            protected void updateItem(Curso curso, boolean vacio) {
+            protected void updateItem(
+                    Curso curso,
+                    boolean vacio) {
+
                 super.updateItem(curso, vacio);
+
                 setText(vacio || curso == null
-                        ? null : curso.getNombre());
+                        ? null
+                        : curso.getNombre());
             }
         });
 
         cursos.setButtonCell(new ListCell<Curso>() {
+
             @Override
-            protected void updateItem(Curso curso, boolean vacio) {
+            protected void updateItem(
+                    Curso curso,
+                    boolean vacio) {
+
                 super.updateItem(curso, vacio);
+
                 setText(vacio || curso == null
-                        ? null : curso.getNombre());
+                        ? null
+                        : curso.getNombre());
             }
         });
 
-        TableColumn<Actividad, String> titulo =
+        // ==========================================
+        // COLUMNAS DE LA TABLA
+        // ==========================================
+
+        TableColumn<Actividad, String> tituloColumna =
                 new TableColumn<>("Título");
 
-        titulo.setCellValueFactory(
-                new javafx.scene.control.cell.PropertyValueFactory<>("titulo"));
+        tituloColumna.setCellValueFactory(
+                new PropertyValueFactory<>("titulo"));
 
-        TableColumn<Actividad, String> descripcion =
+        TableColumn<Actividad, String> descripcionColumna =
                 new TableColumn<>("Descripción");
 
-        descripcion.setCellValueFactory(
-                new javafx.scene.control.cell.PropertyValueFactory<>("descripcion"));
+        descripcionColumna.setCellValueFactory(
+                new PropertyValueFactory<>("descripcion"));
+
+        tituloColumna.setPrefWidth(250);
+        descripcionColumna.setPrefWidth(500);
 
         tabla.getColumns().clear();
-        tabla.getColumns().addAll(titulo, descripcion);
 
-        Button nuevo = new Button("Nueva actividad");
-        Button modificar = new Button("Modificar actividad");
-        Button eliminar = new Button("Eliminar actividad");
-        Button actualizar = new Button("Actualizar lista");
+        tabla.getColumns().addAll(
+                tituloColumna,
+                descripcionColumna);
 
+        // ==========================================
+        // BUSCADOR
+        // ==========================================
+
+        TextField buscador = new TextField();
+
+        buscador.setPromptText(
+                "Buscar por título o descripción...");
+
+        buscador.setPrefHeight(40);
+
+        buscador.setStyle(
+                "-fx-background-color: white;" +
+                "-fx-border-color: #DCE3E8;" +
+                "-fx-border-radius: 8;" +
+                "-fx-background-radius: 8;" +
+                "-fx-padding: 10;");
+
+        buscador.textProperty().addListener(
+                (obs, anterior, nuevo) -> {
+
+            String filtro = nuevo == null
+                    ? ""
+                    : nuevo.toLowerCase().trim();
+
+            actividadesFiltradas.setPredicate(actividad -> {
+
+                if (filtro.isEmpty()) {
+                    return true;
+                }
+
+                return contiene(
+                        actividad.getTitulo(), filtro)
+                        || contiene(
+                        actividad.getDescripcion(), filtro);
+            });
+        });
+
+        // ==========================================
+        // BOTONES
+        // ==========================================
+
+        Button nuevo = crearBoton(
+                "Nueva actividad", AZUL);
+
+        Button modificar = crearBoton(
+                "Modificar actividad", AZUL_OSCURO);
+
+        Button eliminar = crearBoton(
+                "Eliminar actividad", "#C0392B");
+
+        Button actualizar = crearBoton(
+                "Actualizar lista", AZUL_OSCURO);
+
+        // ==========================================
         // FILTRAR POR CURSO
-        cursos.setOnAction(e -> cargarActividades(cursos));
+        // ==========================================
 
-        // REGISTRAR ACTIVIDAD
+        cursos.setOnAction(e -> {
+
+            buscador.clear();
+
+            cargarActividades(
+                    cursos,
+                    datosActividades);
+        });
+
+        // ==========================================
+        // NUEVA ACTIVIDAD
+        // ==========================================
+
         nuevo.setOnAction(e -> {
 
             Curso curso = cursos.getValue();
 
             if (curso == null) {
-                mostrarMensaje("Selecciona un curso.");
+
+                mostrarMensaje(
+                        Alert.AlertType.WARNING,
+                        "Selecciona un curso.");
+
                 return;
             }
 
             TextField tituloCampo = new TextField();
-            TextField descripcionCampo = new TextField();
+
+            tituloCampo.setPromptText(
+                    "Introduce el título de la actividad");
+
+            TextArea descripcionCampo = new TextArea();
+
+            descripcionCampo.setPromptText(
+                    "Introduce la descripción de la actividad");
+
+            descripcionCampo.setPrefRowCount(4);
+            descripcionCampo.setWrapText(true);
 
             GridPane formulario = crearFormulario(
-                    tituloCampo, descripcionCampo);
+                    tituloCampo,
+                    descripcionCampo);
 
             Dialog<ButtonType> dialogo = new Dialog<>();
-            dialogo.setTitle("Nueva actividad");
-            dialogo.getDialogPane().setContent(formulario);
-            dialogo.getDialogPane().getButtonTypes().addAll(
-                    ButtonType.OK, ButtonType.CANCEL);
 
-            Optional<ButtonType> resultado = dialogo.showAndWait();
+            dialogo.setTitle("Nueva actividad");
+
+            dialogo.setHeaderText(
+                    "Registrar una nueva actividad");
+
+            dialogo.getDialogPane().setContent(formulario);
+
+            dialogo.getDialogPane().getButtonTypes().addAll(
+                    ButtonType.OK,
+                    ButtonType.CANCEL);
+
+            Optional<ButtonType> resultado =
+                    dialogo.showAndWait();
 
             if (resultado.isPresent()
                     && resultado.get() == ButtonType.OK) {
 
+                if (tituloCampo.getText().trim().isEmpty()
+                        || descripcionCampo.getText().trim().isEmpty()) {
+
+                    mostrarMensaje(
+                            Alert.AlertType.WARNING,
+                            "Completa el título y la descripción.");
+
+                    return;
+                }
+
                 try {
+
                     Actividad actividad = new Actividad(
                             null,
                             tituloCampo.getText().trim(),
                             descripcionCampo.getText().trim(),
-                            curso.getId()
-                    );
+                            curso.getId());
 
                     servicio.registrar(actividad);
 
-                    // REGISTRAR LOG
                     registrarLog("INSERT", "OK", null);
 
-                    cargarActividades(cursos);
-                    mostrarMensaje("Actividad registrada correctamente.");
+                    cargarActividades(
+                            cursos,
+                            datosActividades);
+
+                    mostrarMensaje(
+                            Alert.AlertType.INFORMATION,
+                            "Actividad registrada correctamente.");
 
                 } catch (Exception ex) {
 
-                    registrarLog("INSERT", "ERROR", ex.getMessage());
+                    registrarLog(
+                            "INSERT",
+                            "ERROR",
+                            ex.getMessage());
 
-                    mostrarMensaje(ex.getMessage());
+                    mostrarMensaje(
+                            Alert.AlertType.ERROR,
+                            ex.getMessage());
                 }
             }
         });
 
+        // ==========================================
         // MODIFICAR ACTIVIDAD
+        // ==========================================
+
         modificar.setOnAction(e -> {
 
             Actividad seleccionada =
                     tabla.getSelectionModel().getSelectedItem();
 
             if (seleccionada == null) {
-                mostrarMensaje("Selecciona una actividad.");
+
+                mostrarMensaje(
+                        Alert.AlertType.WARNING,
+                        "Selecciona una actividad.");
+
                 return;
             }
 
             TextField tituloCampo =
                     new TextField(seleccionada.getTitulo());
 
-            TextField descripcionCampo =
-                    new TextField(seleccionada.getDescripcion());
+            TextArea descripcionCampo =
+                    new TextArea(seleccionada.getDescripcion());
+
+            descripcionCampo.setPrefRowCount(4);
+            descripcionCampo.setWrapText(true);
 
             GridPane formulario = crearFormulario(
-                    tituloCampo, descripcionCampo);
+                    tituloCampo,
+                    descripcionCampo);
 
             Dialog<ButtonType> dialogo = new Dialog<>();
-            dialogo.setTitle("Modificar actividad");
-            dialogo.getDialogPane().setContent(formulario);
-            dialogo.getDialogPane().getButtonTypes().addAll(
-                    ButtonType.OK, ButtonType.CANCEL);
 
-            Optional<ButtonType> resultado = dialogo.showAndWait();
+            dialogo.setTitle("Modificar actividad");
+
+            dialogo.setHeaderText(
+                    "Editar información de la actividad");
+
+            dialogo.getDialogPane().setContent(formulario);
+
+            dialogo.getDialogPane().getButtonTypes().addAll(
+                    ButtonType.OK,
+                    ButtonType.CANCEL);
+
+            Optional<ButtonType> resultado =
+                    dialogo.showAndWait();
 
             if (resultado.isPresent()
                     && resultado.get() == ButtonType.OK) {
 
+                if (tituloCampo.getText().trim().isEmpty()
+                        || descripcionCampo.getText().trim().isEmpty()) {
+
+                    mostrarMensaje(
+                            Alert.AlertType.WARNING,
+                            "Completa el título y la descripción.");
+
+                    return;
+                }
+
                 try {
+
                     Actividad actualizada = new Actividad(
                             seleccionada.getId(),
                             tituloCampo.getText().trim(),
                             descripcionCampo.getText().trim(),
-                            seleccionada.getCursoId()
-                    );
+                            seleccionada.getCursoId());
 
                     servicio.modificar(actualizada);
 
-                    // REGISTRAR LOG
                     registrarLog("UPDATE", "OK", null);
 
-                    cargarActividades(cursos);
-                    mostrarMensaje("Actividad modificada correctamente.");
+                    cargarActividades(
+                            cursos,
+                            datosActividades);
+
+                    mostrarMensaje(
+                            Alert.AlertType.INFORMATION,
+                            "Actividad modificada correctamente.");
 
                 } catch (Exception ex) {
 
-                    registrarLog("UPDATE", "ERROR", ex.getMessage());
+                    registrarLog(
+                            "UPDATE",
+                            "ERROR",
+                            ex.getMessage());
 
-                    mostrarMensaje(ex.getMessage());
+                    mostrarMensaje(
+                            Alert.AlertType.ERROR,
+                            ex.getMessage());
                 }
             }
         });
 
+        // ==========================================
         // ELIMINAR ACTIVIDAD
+        // ==========================================
+
         eliminar.setOnAction(e -> {
 
             Actividad seleccionada =
                     tabla.getSelectionModel().getSelectedItem();
 
             if (seleccionada == null) {
-                mostrarMensaje("Selecciona una actividad.");
+
+                mostrarMensaje(
+                        Alert.AlertType.WARNING,
+                        "Selecciona una actividad.");
+
                 return;
             }
 
@@ -220,49 +438,198 @@ public class VentanaActividades {
                     new Alert(Alert.AlertType.CONFIRMATION);
 
             confirmacion.setTitle("Eliminar actividad");
-            confirmacion.setHeaderText("¿Estás seguro?");
-            confirmacion.setContentText(seleccionada.getTitulo());
 
-            if (confirmacion.showAndWait().orElse(ButtonType.CANCEL)
-                    == ButtonType.OK) {
+            confirmacion.setHeaderText(
+                    "Confirmar eliminación");
+
+            confirmacion.setContentText(
+                    "¿Estás seguro de eliminar la actividad: "
+                    + seleccionada.getTitulo() + "?");
+
+            Optional<ButtonType> resultado =
+                    confirmacion.showAndWait();
+
+            if (resultado.isPresent()
+                    && resultado.get() == ButtonType.OK) {
 
                 try {
+
                     servicio.eliminar(seleccionada.getId());
 
-                    // REGISTRAR LOG
                     registrarLog("DELETE", "OK", null);
 
-                    cargarActividades(cursos);
-                    mostrarMensaje("Actividad eliminada correctamente.");
+                    cargarActividades(
+                            cursos,
+                            datosActividades);
+
+                    mostrarMensaje(
+                            Alert.AlertType.INFORMATION,
+                            "Actividad eliminada correctamente.");
 
                 } catch (Exception ex) {
 
-                    registrarLog("DELETE", "ERROR", ex.getMessage());
+                    registrarLog(
+                            "DELETE",
+                            "ERROR",
+                            ex.getMessage());
 
-                    mostrarMensaje(ex.getMessage());
+                    mostrarMensaje(
+                            Alert.AlertType.ERROR,
+                            ex.getMessage());
                 }
             }
         });
 
+        // ==========================================
         // ACTUALIZAR LISTA
-        actualizar.setOnAction(e -> cargarActividades(cursos));
+        // ==========================================
 
-        VBox contenido = new VBox(
+        actualizar.setOnAction(e -> {
+
+            buscador.clear();
+
+            cargarActividades(
+                    cursos,
+                    datosActividades);
+        });
+
+        // ==========================================
+        // CABECERA
+        // ==========================================
+
+        Label etiqueta = new Label("ADMINISTRACIÓN ACADÉMICA");
+
+        etiqueta.setStyle(
+                "-fx-text-fill: " + AZUL + ";" +
+                "-fx-font-size: 11px;" +
+                "-fx-font-weight: bold;");
+
+        Label titulo = new Label("Gestión de actividades");
+
+        titulo.setStyle(
+                "-fx-text-fill: " + AZUL_OSCURO + ";" +
+                "-fx-font-size: 27px;" +
+                "-fx-font-weight: bold;");
+
+        Label descripcion = new Label(
+                "Crea, consulta, modifica y administra las actividades de cada curso.");
+
+        descripcion.setStyle(
+                "-fx-text-fill: " + GRIS + ";" +
+                "-fx-font-size: 13px;");
+
+        VBox cabecera = new VBox(
+                6,
+                etiqueta,
+                titulo,
+                descripcion);
+
+        // ==========================================
+        // PANEL DE SELECCIÓN DE CURSO
+        // ==========================================
+
+        Label tituloCurso = new Label("Seleccionar curso");
+
+        tituloCurso.setStyle(
+                "-fx-font-size: 16px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + AZUL_OSCURO + ";");
+
+        VBox panelCurso = new VBox(
                 12,
-                new Label("Seleccionar curso:"),
-                cursos,
-                tabla,
+                tituloCurso,
+                cursos);
+
+        panelCurso.setPadding(new Insets(20));
+
+        panelCurso.setStyle(
+                "-fx-background-color: white;" +
+                "-fx-background-radius: 14;" +
+                "-fx-border-color: #E1E7EC;" +
+                "-fx-border-radius: 14;");
+
+        // ==========================================
+        // PANEL DE ACTIVIDADES
+        // ==========================================
+
+        Label tituloTabla = new Label(
+                "Actividades registradas");
+
+        tituloTabla.setStyle(
+                "-fx-font-size: 17px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + AZUL_OSCURO + ";");
+
+        Label textoBuscar = new Label("Buscar actividades");
+
+        textoBuscar.setStyle(
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + AZUL_OSCURO + ";");
+
+        VBox zonaBusqueda = new VBox(
+                8,
+                textoBuscar,
+                buscador);
+
+        HBox botones = new HBox(
+                10,
                 nuevo,
                 modificar,
                 eliminar,
-                actualizar
-        );
+                actualizar);
 
-        contenido.setPadding(new Insets(20));
+        botones.setAlignment(Pos.CENTER_LEFT);
+        botones.setSpacing(10);
+        botones.setPadding(new Insets(5, 0, 0, 0));
 
-        cargarActividades(cursos);
+        botones.setOnMouseEntered(e -> {
+        });
 
-        ventana.setScene(new Scene(contenido, 750, 550));
+        VBox tarjetaTabla = new VBox(
+                18,
+                tituloTabla,
+                zonaBusqueda,
+                tabla,
+                botones);
+
+        tarjetaTabla.setPadding(new Insets(22));
+
+        tarjetaTabla.setStyle(
+                "-fx-background-color: white;" +
+                "-fx-background-radius: 14;" +
+                "-fx-border-color: #E1E7EC;" +
+                "-fx-border-radius: 14;");
+
+        VBox.setVgrow(tabla, Priority.ALWAYS);
+
+        // ==========================================
+        // CONTENIDO PRINCIPAL
+        // ==========================================
+
+        VBox contenido = new VBox(
+                22,
+                cabecera,
+                panelCurso,
+                tarjetaTabla);
+
+        contenido.setPadding(new Insets(30));
+
+        contenido.setStyle(
+                "-fx-background-color: " + FONDO + ";");
+
+        // ==========================================
+        // VENTANA
+        // ==========================================
+
+        Scene escena = new Scene(
+                contenido,
+                1100,
+                750);
+
+        ventana.setScene(escena);
+
+        ventana.setMinWidth(850);
+        ventana.setMinHeight(600);
 
         ventana.setOnHidden(e -> {
             servicio.cerrar();
@@ -272,45 +639,134 @@ public class VentanaActividades {
         ventana.show();
     }
 
+    // ==========================================
+    // CREAR FORMULARIO
+    // ==========================================
+
     private GridPane crearFormulario(
-            TextField titulo, TextField descripcion) {
+            TextField titulo,
+            Control descripcion) {
 
         GridPane formulario = new GridPane();
-        formulario.setPadding(new Insets(15));
-        formulario.setHgap(10);
-        formulario.setVgap(10);
 
-        formulario.add(new Label("Título:"), 0, 0);
-        formulario.add(titulo, 1, 0);
+        formulario.setPadding(new Insets(20));
+        formulario.setHgap(15);
+        formulario.setVgap(15);
 
-        formulario.add(new Label("Descripción:"), 0, 1);
-        formulario.add(descripcion, 1, 1);
+        titulo.setPrefWidth(350);
+
+        descripcion.setPrefWidth(350);
+
+        formulario.add(
+                new Label("Título:"),
+                0,
+                0);
+
+        formulario.add(
+                titulo,
+                1,
+                0);
+
+        formulario.add(
+                new Label("Descripción:"),
+                0,
+                1);
+
+        formulario.add(
+                descripcion,
+                1,
+                1);
 
         return formulario;
     }
 
-    private void cargarActividades(ComboBox<Curso> cursos) {
+    // ==========================================
+    // CARGAR ACTIVIDADES POR CURSO
+    // ==========================================
+
+    private void cargarActividades(
+            ComboBox<Curso> cursos,
+            ObservableList<Actividad> datosActividades) {
 
         Curso curso = cursos.getValue();
 
+        datosActividades.clear();
+
         if (curso == null) {
-            tabla.getItems().clear();
             return;
         }
 
-        tabla.setItems(
-                FXCollections.observableArrayList(
-                        servicio.listarPorCurso(curso.getId())
-                )
-        );
+        try {
+
+            for (Actividad actividad :
+                    servicio.listarPorCurso(curso.getId())) {
+
+                datosActividades.add(actividad);
+            }
+
+            tabla.refresh();
+
+        } catch (Exception ex) {
+
+            mostrarMensaje(
+                    Alert.AlertType.ERROR,
+                    ex.getMessage());
+        }
     }
 
-    private void mostrarMensaje(String mensaje) {
+    // ==========================================
+    // BUSCADOR
+    // ==========================================
 
-        Alert alerta = new Alert(Alert.AlertType.INFORMATION);
-        alerta.setTitle("Academy");
+    private boolean contiene(
+            String texto,
+            String filtro) {
+
+        return texto != null
+                && texto.toLowerCase().contains(filtro);
+    }
+
+    // ==========================================
+    // CREAR BOTONES
+    // ==========================================
+
+    private Button crearBoton(
+            String texto,
+            String color) {
+
+        Button boton = new Button(texto);
+
+        boton.setPrefHeight(40);
+
+        boton.setPadding(
+                new Insets(0, 16, 0, 16));
+
+        boton.setCursor(Cursor.HAND);
+
+        boton.setStyle(
+                "-fx-background-color: " + color + ";" +
+                "-fx-text-fill: white;" +
+                "-fx-font-weight: bold;" +
+                "-fx-background-radius: 8;" +
+                "-fx-cursor: hand;");
+
+        return boton;
+    }
+
+    // ==========================================
+    // MOSTRAR MENSAJES
+    // ==========================================
+
+    private void mostrarMensaje(
+            Alert.AlertType tipo,
+            String mensaje) {
+
+        Alert alerta = new Alert(tipo);
+
+        alerta.setTitle("Erandio Academy");
         alerta.setHeaderText(null);
         alerta.setContentText(mensaje);
+
         alerta.showAndWait();
     }
 }

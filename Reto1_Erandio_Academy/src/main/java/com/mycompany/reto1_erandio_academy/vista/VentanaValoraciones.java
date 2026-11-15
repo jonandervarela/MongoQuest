@@ -12,15 +12,26 @@ import com.mycompany.reto1_erandio_academy.servicio.LogServicio;
 
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class VentanaValoraciones {
+
+    private static final String TINTA = "#12283A";
+    private static final String AZUL = "#1F6F8B";
+    private static final String FONDO = "#F2F5F7";
+    private static final String GRIS = "#64748B";
 
     private CursoDAO cursoDAO;
     private UsuarioDAO usuarioDAO;
@@ -40,11 +51,15 @@ public class VentanaValoraciones {
     private Map<String, String> nombresUsuarios = new HashMap<>();
     private Map<String, String> nombresCursos = new HashMap<>();
 
+    // =========================
     // REGISTRAR LOG
+    // =========================
+
     private void registrarLog(
             String operacion,
             String resultado,
-            String error) {
+            String error
+    ) {
 
         LogServicio logServicio = new LogServicio();
 
@@ -53,11 +68,16 @@ public class VentanaValoraciones {
                     operacion,
                     "valoraciones",
                     resultado,
-                    error);
+                    error
+            );
         } finally {
             logServicio.cerrar();
         }
     }
+
+    // =========================
+    // MOSTRAR VENTANA
+    // =========================
 
     public void mostrar() {
 
@@ -79,27 +99,137 @@ public class VentanaValoraciones {
 
         Stage ventana = new Stage();
 
-        Label titulo = new Label("VALORAR CURSO");
+        // =========================
+        // PANEL PRINCIPAL
+        // =========================
 
-        titulo.setStyle(
-                "-fx-font-size: 24px;"
-                + "-fx-font-weight: bold;"
+        VBox raiz = new VBox();
+        raiz.setStyle(
+                "-fx-background-color: " + FONDO + ";"
         );
 
-        VBox contenido = new VBox(12);
-        contenido.setPadding(new Insets(25));
+        // =========================
+        // CABECERA
+        // =========================
 
-        contenido.getChildren().add(titulo);
+        Label titulo = new Label("Valoraciones");
 
-        // ADMIN PUEDE SELECCIONAR CUALQUIER USUARIO
+        titulo.setFont(
+                Font.font("Segoe UI", FontWeight.BOLD, 25)
+        );
+
+        titulo.setTextFill(Color.web(TINTA));
+
+        Label subtitulo = new Label(
+                "Comparte tu opinión y consulta las valoraciones de los cursos."
+        );
+
+        subtitulo.setFont(
+                Font.font("Segoe UI", 13)
+        );
+
+        subtitulo.setTextFill(Color.web(GRIS));
+        subtitulo.setWrapText(true);
+
+        VBox textosCabecera = new VBox(
+                5,
+                titulo,
+                subtitulo
+        );
+
+        Label etiquetaRol = new Label(
+                esAdministrador ? "ADMINISTRACIÓN" : "USUARIO"
+        );
+
+        etiquetaRol.setFont(
+                Font.font("Segoe UI", FontWeight.BOLD, 11)
+        );
+
+        etiquetaRol.setTextFill(Color.web(AZUL));
+
+        etiquetaRol.setPadding(
+                new Insets(8, 14, 8, 14)
+        );
+
+        etiquetaRol.setStyle(
+                "-fx-background-color: #DCEEF3;"
+                + "-fx-background-radius: 20;"
+        );
+
+        Region espacioCabecera = new Region();
+        HBox.setHgrow(espacioCabecera, Priority.ALWAYS);
+
+        HBox cabecera = new HBox(
+                textosCabecera,
+                espacioCabecera,
+                etiquetaRol
+        );
+
+        cabecera.setAlignment(Pos.CENTER_LEFT);
+        cabecera.setPadding(
+                new Insets(28, 35, 22, 35)
+        );
+
+        // =========================
+        // TARJETA DE FORMULARIO
+        // =========================
+
+        Label tituloFormulario = new Label(
+                "Registrar valoración"
+        );
+
+        tituloFormulario.setFont(
+                Font.font("Segoe UI", FontWeight.BOLD, 19)
+        );
+
+        tituloFormulario.setTextFill(Color.web(TINTA));
+
+        Label descripcionFormulario = new Label(
+                "Selecciona un curso, indica tu puntuación y escribe un comentario."
+        );
+
+        descripcionFormulario.setFont(
+                Font.font("Segoe UI", 12)
+        );
+
+        descripcionFormulario.setTextFill(Color.web(GRIS));
+        descripcionFormulario.setWrapText(true);
+
+        VBox tarjetaFormulario = new VBox(15);
+
+        tarjetaFormulario.setPadding(
+                new Insets(23)
+        );
+
+        tarjetaFormulario.setStyle(
+                "-fx-background-color: white;"
+                + "-fx-background-radius: 12;"
+                + "-fx-border-color: #E1E8ED;"
+                + "-fx-border-radius: 12;"
+        );
+
+        tarjetaFormulario.getChildren().addAll(
+                tituloFormulario,
+                descripcionFormulario
+        );
+
+        // =========================
+        // SELECCIONAR USUARIO
+        // =========================
+
         if (esAdministrador) {
 
-            Label etiquetaUsuario =
-                    new Label("Seleccionar usuario:");
+            Label etiquetaUsuario = crearEtiqueta(
+                    "Seleccionar usuario"
+            );
 
             comboUsuarios = new ComboBox<>();
 
-            comboUsuarios.setPrefWidth(300);
+            comboUsuarios.setPromptText(
+                    "Selecciona un usuario..."
+            );
+
+            comboUsuarios.setMaxWidth(Double.MAX_VALUE);
 
             comboUsuarios.setItems(
                     FXCollections.observableArrayList(
@@ -108,12 +238,13 @@ public class VentanaValoraciones {
             );
 
             comboUsuarios.setConverter(
-                    new javafx.util.StringConverter<Usuario>() {
+                    new StringConverter<Usuario>() {
 
                 @Override
                 public String toString(Usuario usuario) {
                     return usuario == null
-                            ? "" : usuario.getNombre();
+                            ? ""
+                            : usuario.getNombre();
                 }
 
                 @Override
@@ -122,26 +253,77 @@ public class VentanaValoraciones {
                 }
             });
 
-            contenido.getChildren().addAll(
+            comboUsuarios.setCellFactory(lista ->
+                    new ListCell<Usuario>() {
+
+                @Override
+                protected void updateItem(
+                        Usuario usuario,
+                        boolean vacio
+                ) {
+                    super.updateItem(usuario, vacio);
+
+                    setText(
+                            vacio || usuario == null
+                                    ? null
+                                    : usuario.getNombre()
+                    );
+                }
+            });
+
+            tarjetaFormulario.getChildren().addAll(
                     etiquetaUsuario,
                     comboUsuarios
             );
 
         } else {
 
-            // USUARIO SOLAMENTE PUEDE VALORAR CON SU CUENTA
-            Label etiquetaUsuario = new Label(
-                    "Usuario: " + usuarioActual.getNombre()
+            Label etiquetaUsuario = crearEtiqueta(
+                    "Usuario"
             );
 
-            contenido.getChildren().add(etiquetaUsuario);
+            Label nombreUsuario = new Label(
+                    usuarioActual.getNombre()
+            );
+
+            nombreUsuario.setFont(
+                    Font.font("Segoe UI", FontWeight.BOLD, 14)
+            );
+
+            nombreUsuario.setTextFill(Color.web(TINTA));
+
+            nombreUsuario.setPadding(
+                    new Insets(12)
+            );
+
+            nombreUsuario.setMaxWidth(Double.MAX_VALUE);
+
+            nombreUsuario.setStyle(
+                    "-fx-background-color: #F2F5F7;"
+                    + "-fx-background-radius: 7;"
+            );
+
+            tarjetaFormulario.getChildren().addAll(
+                    etiquetaUsuario,
+                    nombreUsuario
+            );
         }
 
-        Label etiquetaCurso = new Label("Seleccionar curso:");
+        // =========================
+        // SELECCIONAR CURSO
+        // =========================
+
+        Label etiquetaCurso = crearEtiqueta(
+                "Seleccionar curso"
+        );
 
         comboCursos = new ComboBox<>();
 
-        comboCursos.setPrefWidth(300);
+        comboCursos.setPromptText(
+                "Selecciona un curso..."
+        );
+
+        comboCursos.setMaxWidth(Double.MAX_VALUE);
 
         comboCursos.setItems(
                 FXCollections.observableArrayList(
@@ -150,12 +332,13 @@ public class VentanaValoraciones {
         );
 
         comboCursos.setConverter(
-                new javafx.util.StringConverter<Curso>() {
+                new StringConverter<Curso>() {
 
             @Override
             public String toString(Curso curso) {
                 return curso == null
-                        ? "" : curso.getNombre();
+                        ? ""
+                        : curso.getNombre();
             }
 
             @Override
@@ -164,8 +347,31 @@ public class VentanaValoraciones {
             }
         });
 
-        Label etiquetaPuntuacion =
-                new Label("Puntuación (1 a 5):");
+        comboCursos.setCellFactory(lista ->
+                new ListCell<Curso>() {
+
+            @Override
+            protected void updateItem(
+                    Curso curso,
+                    boolean vacio
+            ) {
+                super.updateItem(curso, vacio);
+
+                setText(
+                        vacio || curso == null
+                                ? null
+                                : curso.getNombre()
+                );
+            }
+        });
+
+        // =========================
+        // PUNTUACIÓN
+        // =========================
+
+        Label etiquetaPuntuacion = crearEtiqueta(
+                "Puntuación (1 a 5)"
+        );
 
         comboPuntuacion = new ComboBox<>();
 
@@ -179,7 +385,15 @@ public class VentanaValoraciones {
                 "Selecciona una puntuación"
         );
 
-        Label etiquetaComentario = new Label("Comentario:");
+        comboPuntuacion.setMaxWidth(Double.MAX_VALUE);
+
+        // =========================
+        // COMENTARIO
+        // =========================
+
+        Label etiquetaComentario = crearEtiqueta(
+                "Comentario"
+        );
 
         campoComentario = new TextArea();
 
@@ -188,29 +402,92 @@ public class VentanaValoraciones {
         );
 
         campoComentario.setPrefRowCount(4);
+        campoComentario.setWrapText(true);
+        campoComentario.setStyle(
+                "-fx-font-family: 'Segoe UI';"
+                + "-fx-font-size: 13px;"
+        );
 
-        Button botonGuardar =
-                new Button("Guardar valoración");
+        // =========================
+        // BOTÓN GUARDAR
+        // =========================
 
-        botonGuardar.setOnAction(e -> guardarValoracion());
+        Button botonGuardar = crearBoton(
+                "Guardar valoración"
+        );
 
-        contenido.getChildren().addAll(
+        botonGuardar.setOnAction(
+                e -> guardarValoracion()
+        );
+
+        HBox filaBoton = new HBox(
+                botonGuardar
+        );
+
+        filaBoton.setAlignment(
+                Pos.CENTER_RIGHT
+        );
+
+        tarjetaFormulario.getChildren().addAll(
                 etiquetaCurso,
                 comboCursos,
                 etiquetaPuntuacion,
                 comboPuntuacion,
                 etiquetaComentario,
                 campoComentario,
-                botonGuardar
+                filaBoton
         );
 
+        // =========================
         // TABLA DE VALORACIONES
+        // =========================
+
+        Label tituloTabla = new Label(
+                "Valoraciones registradas"
+        );
+
+        tituloTabla.setFont(
+                Font.font("Segoe UI", FontWeight.BOLD, 19)
+        );
+
+        tituloTabla.setTextFill(Color.web(TINTA));
+
+        Label descripcionTabla = new Label(
+                esAdministrador
+                        ? "Consulta todas las valoraciones registradas."
+                        : "Consulta las valoraciones que has realizado."
+        );
+
+        descripcionTabla.setFont(
+                Font.font("Segoe UI", 12)
+        );
+
+        descripcionTabla.setTextFill(Color.web(GRIS));
+
         tabla = new TableView<>();
+
+        tabla.setColumnResizePolicy(
+                TableView.CONSTRAINED_RESIZE_POLICY
+        );
+
+        tabla.setPlaceholder(
+                new Label("Todavía no hay valoraciones registradas.")
+        );
+
+        tabla.setStyle(
+                "-fx-font-family: 'Segoe UI';"
+                + "-fx-font-size: 12px;"
+        );
 
         crearColumnas();
 
-        Button botonActualizar =
-                new Button("Actualizar valoraciones");
+        // =========================
+        // BOTÓN ACTUALIZAR
+        // =========================
+
+        Button botonActualizar = crearBoton(
+                "Actualizar valoraciones"
+        );
 
         botonActualizar.setOnAction(e -> {
             cargarNombres();
@@ -218,18 +495,114 @@ public class VentanaValoraciones {
             tabla.refresh();
         });
 
-        contenido.getChildren().addAll(
-                new Label("Valoraciones registradas:"),
-                tabla,
+        HBox filaActualizar = new HBox(
                 botonActualizar
         );
+
+        filaActualizar.setAlignment(
+                Pos.CENTER_RIGHT
+        );
+
+        // =========================
+        // TARJETA TABLA
+        // =========================
+
+        VBox tarjetaTabla = new VBox(
+                14,
+                tituloTabla,
+                descripcionTabla,
+                tabla,
+                filaActualizar
+        );
+
+        tarjetaTabla.setPadding(
+                new Insets(23)
+        );
+
+        tarjetaTabla.setStyle(
+                "-fx-background-color: white;"
+                + "-fx-background-radius: 12;"
+                + "-fx-border-color: #E1E8ED;"
+                + "-fx-border-radius: 12;"
+        );
+
+        tabla.setPrefHeight(280);
+        tabla.setMinHeight(200);
+
+        // =========================
+        // CONTENIDO CENTRAL
+        // =========================
+
+        VBox contenido = new VBox(
+                20,
+                tarjetaFormulario,
+                tarjetaTabla
+        );
+
+        contenido.setPadding(
+                new Insets(10, 35, 30, 35)
+        );
+
+        VBox raizContenido = new VBox(
+                cabecera,
+                contenido
+        );
+
+        raizContenido.setStyle(
+                "-fx-background-color: " + FONDO + ";"
+        );
+
+        // =========================
+        // SCROLL
+        // =========================
+
+        ScrollPane scroll = new ScrollPane();
+
+        scroll.setContent(raizContenido);
+        scroll.setFitToWidth(true);
+        scroll.setFitToHeight(false);
+        scroll.setPannable(true);
+
+        scroll.setHbarPolicy(
+                ScrollPane.ScrollBarPolicy.NEVER
+        );
+
+        scroll.setVbarPolicy(
+                ScrollPane.ScrollBarPolicy.AS_NEEDED
+        );
+
+        scroll.setStyle(
+                "-fx-background: " + FONDO + ";"
+                + "-fx-background-color: " + FONDO + ";"
+                + "-fx-border-color: transparent;"
+        );
+
+        raiz.getChildren().add(scroll);
+        VBox.setVgrow(scroll, Priority.ALWAYS);
+
+        // =========================
+        // CARGAR DATOS
+        // =========================
 
         cargarNombres();
         cargarValoraciones();
 
-        Scene escena = new Scene(contenido, 750, 750);
+        // =========================
+        // MOSTRAR VENTANA
+        // =========================
 
-        ventana.setTitle("Academy - Valoraciones");
+        Scene escena = new Scene(
+                raiz,
+                1050,
+                750
+        );
+
+        ventana.setTitle(
+                "Erandio Academy - Valoraciones"
+        );
+
+        ventana.setMinWidth(800);
+        ventana.setMinHeight(600);
         ventana.setScene(escena);
 
         ventana.setOnHidden(e -> {
@@ -241,7 +614,68 @@ public class VentanaValoraciones {
         ventana.show();
     }
 
-    // CARGAR NOMBRES DE USUARIOS Y CURSOS
+    // =========================
+    // CREAR ETIQUETAS
+    // =========================
+
+    private Label crearEtiqueta(String texto) {
+
+        Label etiqueta = new Label(texto);
+
+        etiqueta.setFont(
+                Font.font("Segoe UI", FontWeight.BOLD, 12)
+        );
+
+        etiqueta.setTextFill(Color.web(TINTA));
+
+        return etiqueta;
+    }
+
+    // =========================
+    // CREAR BOTONES
+    // =========================
+
+    private Button crearBoton(String texto) {
+
+        Button boton = new Button(texto);
+
+        boton.setFont(
+                Font.font("Segoe UI", FontWeight.BOLD, 12)
+        );
+
+        boton.setTextFill(Color.WHITE);
+        boton.setPadding(
+                new Insets(11, 20, 11, 20)
+        );
+
+        boton.setCursor(Cursor.HAND);
+
+        boton.setStyle(
+                "-fx-background-color: " + AZUL + ";"
+                + "-fx-background-radius: 7;"
+        );
+
+        boton.setOnMouseEntered(e ->
+                boton.setStyle(
+                        "-fx-background-color: #18566D;"
+                        + "-fx-background-radius: 7;"
+                )
+        );
+
+        boton.setOnMouseExited(e ->
+                boton.setStyle(
+                        "-fx-background-color: " + AZUL + ";"
+                        + "-fx-background-radius: 7;"
+                )
+        );
+
+        return boton;
+    }
+
+    // =========================
+    // CARGAR NOMBRES
+    // =========================
+
     private void cargarNombres() {
 
         nombresUsuarios.clear();
@@ -264,7 +698,10 @@ public class VentanaValoraciones {
         }
     }
 
+    // =========================
     // CREAR COLUMNAS
+    // =========================
+
     private void crearColumnas() {
 
         TableColumn<Valoracion, String> usuarioColumna =
@@ -296,7 +733,9 @@ public class VentanaValoraciones {
 
         puntuacionColumna.setCellValueFactory(d ->
                 new javafx.beans.property.SimpleStringProperty(
-                        String.valueOf(d.getValue().getPuntuacion())
+                        String.valueOf(
+                                d.getValue().getPuntuacion()
+                        )
                 )
         );
 
@@ -309,11 +748,6 @@ public class VentanaValoraciones {
                 )
         );
 
-        usuarioColumna.setPrefWidth(140);
-        cursoColumna.setPrefWidth(150);
-        puntuacionColumna.setPrefWidth(100);
-        comentarioColumna.setPrefWidth(250);
-
         tabla.getColumns().addAll(
                 usuarioColumna,
                 cursoColumna,
@@ -322,7 +756,10 @@ public class VentanaValoraciones {
         );
     }
 
+    // =========================
     // GUARDAR VALORACIÓN
+    // =========================
+
     private void guardarValoracion() {
 
         Usuario usuario;
@@ -363,8 +800,11 @@ public class VentanaValoraciones {
 
             if (resultado) {
 
-                // REGISTRAR OPERACIÓN CORRECTA
-                registrarLog("INSERT", "OK", null);
+                registrarLog(
+                        "INSERT",
+                        "OK",
+                        null
+                );
 
                 mostrarMensaje(
                         Alert.AlertType.INFORMATION,
@@ -378,7 +818,6 @@ public class VentanaValoraciones {
 
             } else {
 
-                // REGISTRAR OPERACIÓN FALLIDA
                 registrarLog(
                         "INSERT",
                         "ERROR",
@@ -393,7 +832,6 @@ public class VentanaValoraciones {
 
         } catch (Exception ex) {
 
-            // REGISTRAR EXCEPCIÓN
             registrarLog(
                     "INSERT",
                     "ERROR",
@@ -407,7 +845,10 @@ public class VentanaValoraciones {
         }
     }
 
-    // CARGAR VALORACIONES SEGÚN EL ROL
+    // =========================
+    // CARGAR VALORACIONES
+    // =========================
+
     private void cargarValoraciones() {
 
         if (esAdministrador) {
@@ -430,14 +871,18 @@ public class VentanaValoraciones {
         }
     }
 
+    // =========================
     // MOSTRAR MENSAJES
+    // =========================
+
     private void mostrarMensaje(
             Alert.AlertType tipo,
-            String mensaje) {
+            String mensaje
+    ) {
 
         Alert alerta = new Alert(tipo);
 
-        alerta.setTitle("Academy");
+        alerta.setTitle("Erandio Academy");
         alerta.setHeaderText(null);
         alerta.setContentText(mensaje);
 

@@ -11,14 +11,19 @@ import com.mycompany.reto1_erandio_academy.servicio.SesionUsuario;
 import com.mycompany.reto1_erandio_academy.servicio.LogServicio;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class VentanaMatriculas {
 
@@ -31,10 +36,21 @@ public class VentanaMatriculas {
     private Usuario usuarioActual;
     private boolean esAdministrador;
 
-    private Map<String, String> nombresUsuarios = new HashMap<>();
-    private Map<String, String> nombresCursos = new HashMap<>();
+    private final Map<String, String> nombresUsuarios =
+            new HashMap<>();
 
+    private final Map<String, String> nombresCursos =
+            new HashMap<>();
+
+    private final String AZUL_OSCURO = "#12283A";
+    private final String AZUL = "#1F6F8B";
+    private final String FONDO = "#F2F5F7";
+    private final String GRIS = "#64748B";
+
+    // ==========================================
     // REGISTRAR LOG
+    // ==========================================
+
     private void registrarLog(
             String operacion,
             String resultado,
@@ -52,6 +68,10 @@ public class VentanaMatriculas {
             logServicio.cerrar();
         }
     }
+
+    // ==========================================
+    // MOSTRAR VENTANA
+    // ==========================================
 
     public void mostrar() {
 
@@ -71,40 +91,92 @@ public class VentanaMatriculas {
         servicio = new MatriculaServicio();
 
         Stage ventana = new Stage();
-        ventana.setTitle("Academy - Matrículas");
 
-        VBox contenido = new VBox(12);
-        contenido.setPadding(new Insets(20));
+        ventana.setTitle(
+                "Erandio Academy - Gestión de matrículas");
 
-        Label titulo = new Label("GESTIÓN DE MATRÍCULAS");
+        // ==========================================
+        // LISTA Y FILTRO
+        // ==========================================
+
+        ObservableList<Matricula> datosMatriculas =
+                FXCollections.observableArrayList();
+
+        FilteredList<Matricula> matriculasFiltradas =
+                new FilteredList<>(datosMatriculas, m -> true);
+
+        tabla.setItems(matriculasFiltradas);
+
+        tabla.setColumnResizePolicy(
+                TableView.CONSTRAINED_RESIZE_POLICY);
+
+        tabla.setPlaceholder(
+                new Label("No hay matrículas registradas."));
+
+        // ==========================================
+        // CABECERA
+        // ==========================================
+
+        Label etiqueta = new Label("ADMINISTRACIÓN ACADÉMICA");
+
+        etiqueta.setStyle(
+                "-fx-text-fill: " + AZUL + ";" +
+                "-fx-font-size: 11px;" +
+                "-fx-font-weight: bold;");
+
+        Label titulo = new Label("Gestión de matrículas");
 
         titulo.setStyle(
-                "-fx-font-size: 24px;"
-                + "-fx-font-weight: bold;"
-        );
+                "-fx-text-fill: " + AZUL_OSCURO + ";" +
+                "-fx-font-size: 27px;" +
+                "-fx-font-weight: bold;");
 
-        contenido.getChildren().add(titulo);
+        Label descripcion = new Label(
+                esAdministrador
+                ? "Administra las inscripciones de los usuarios en los cursos."
+                : "Consulta las matrículas de tus cursos.");
 
-        // ADMINISTRADOR
+        descripcion.setStyle(
+                "-fx-text-fill: " + GRIS + ";" +
+                "-fx-font-size: 13px;");
+
+        VBox cabecera = new VBox(
+                6,
+                etiqueta,
+                titulo,
+                descripcion);
+
+        // ==========================================
+        // PANEL DE NUEVA MATRÍCULA - SOLO ADMIN
+        // ==========================================
+
+        VBox panelMatricula = new VBox(14);
+
         if (esAdministrador) {
 
+            Label tituloNueva = new Label("Nueva matrícula");
+
+            tituloNueva.setStyle(
+                    "-fx-font-size: 17px;" +
+                    "-fx-font-weight: bold;" +
+                    "-fx-text-fill: " + AZUL_OSCURO + ";");
+
             ComboBox<Usuario> usuarios = new ComboBox<>();
-            ComboBox<Curso> cursos = new ComboBox<>();
 
             usuarios.setPromptText("Selecciona un usuario");
-            cursos.setPromptText("Selecciona un curso");
+            usuarios.setMaxWidth(Double.MAX_VALUE);
+            usuarios.setPrefHeight(40);
 
+            ComboBox<Curso> cursos = new ComboBox<>();
+
+            cursos.setPromptText("Selecciona un curso");
+            cursos.setMaxWidth(Double.MAX_VALUE);
+            cursos.setPrefHeight(40);
+
+            // CARGAR USUARIOS
             usuarios.setItems(
                     FXCollections.observableArrayList(
-                            usuarioDAO.listar()
-                    )
-            );
-
-            cursos.setItems(
-                    FXCollections.observableArrayList(
-                            cursoDAO.listar()
-                    )
-            );
+                            usuarioDAO.listar()));
 
             // MOSTRAR NOMBRE DEL USUARIO
             usuarios.setCellFactory(lista ->
@@ -112,12 +184,14 @@ public class VentanaMatriculas {
 
                 @Override
                 protected void updateItem(
-                        Usuario usuario, boolean vacio) {
+                        Usuario usuario,
+                        boolean vacio) {
 
                     super.updateItem(usuario, vacio);
 
                     setText(vacio || usuario == null
-                            ? null : usuario.getNombre());
+                            ? null
+                            : usuario.getNombre());
                 }
             });
 
@@ -125,14 +199,21 @@ public class VentanaMatriculas {
 
                 @Override
                 protected void updateItem(
-                        Usuario usuario, boolean vacio) {
+                        Usuario usuario,
+                        boolean vacio) {
 
                     super.updateItem(usuario, vacio);
 
                     setText(vacio || usuario == null
-                            ? null : usuario.getNombre());
+                            ? null
+                            : usuario.getNombre());
                 }
             });
+
+            // CARGAR CURSOS
+            cursos.setItems(
+                    FXCollections.observableArrayList(
+                            cursoDAO.listar()));
 
             // MOSTRAR NOMBRE DEL CURSO
             cursos.setCellFactory(lista ->
@@ -140,12 +221,14 @@ public class VentanaMatriculas {
 
                 @Override
                 protected void updateItem(
-                        Curso curso, boolean vacio) {
+                        Curso curso,
+                        boolean vacio) {
 
                     super.updateItem(curso, vacio);
 
                     setText(vacio || curso == null
-                            ? null : curso.getNombre());
+                            ? null
+                            : curso.getNombre());
                 }
             });
 
@@ -153,97 +236,179 @@ public class VentanaMatriculas {
 
                 @Override
                 protected void updateItem(
-                        Curso curso, boolean vacio) {
+                        Curso curso,
+                        boolean vacio) {
 
                     super.updateItem(curso, vacio);
 
                     setText(vacio || curso == null
-                            ? null : curso.getNombre());
+                            ? null
+                            : curso.getNombre());
                 }
             });
 
-            Button matricular = new Button("Matricular usuario");
+            Button matricular = crearBoton(
+                    "Matricular usuario", AZUL);
 
             matricular.setOnAction(e -> {
 
                 Usuario usuario = usuarios.getValue();
                 Curso curso = cursos.getValue();
 
+                if (usuario == null || curso == null) {
+
+                    mostrarMensaje(
+                            Alert.AlertType.WARNING,
+                            "Selecciona un usuario y un curso.");
+
+                    return;
+                }
+
                 try {
-
-                    if (usuario == null || curso == null) {
-
-                        mostrarMensaje(
-                                Alert.AlertType.WARNING,
-                                "Selecciona un usuario y un curso."
-                        );
-
-                        return;
-                    }
 
                     servicio.matricular(
                             usuario.getId(),
-                            curso.getId()
-                    );
+                            curso.getId());
 
-                    // REGISTRAR LOG
                     registrarLog("INSERT", "OK", null);
 
-                    cargarMatriculas();
+                    cargarNombres();
+
+                    crearColumnas();
+
+                    cargarMatriculas(
+                            datosMatriculas);
 
                     mostrarMensaje(
                             Alert.AlertType.INFORMATION,
-                            "Usuario matriculado correctamente."
-                    );
+                            "Usuario matriculado correctamente.");
+
+                    usuarios.getSelectionModel().clearSelection();
+                    cursos.getSelectionModel().clearSelection();
 
                 } catch (Exception ex) {
 
-                    // REGISTRAR ERROR
                     registrarLog(
                             "INSERT",
                             "ERROR",
-                            ex.getMessage()
-                    );
+                            ex.getMessage());
 
                     mostrarMensaje(
                             Alert.AlertType.ERROR,
-                            ex.getMessage()
-                    );
+                            ex.getMessage());
                 }
             });
 
-            contenido.getChildren().addAll(
-                    new Label("Seleccionar usuario:"),
+            panelMatricula.getChildren().addAll(
+                    tituloNueva,
+                    new Label("Seleccionar usuario"),
                     usuarios,
-                    new Label("Seleccionar curso:"),
+                    new Label("Seleccionar curso"),
                     cursos,
-                    matricular
-            );
+                    matricular);
+
+            panelMatricula.setPadding(new Insets(20));
+
+            panelMatricula.setStyle(
+                    "-fx-background-color: white;" +
+                    "-fx-background-radius: 14;" +
+                    "-fx-border-color: #E1E7EC;" +
+                    "-fx-border-radius: 14;");
         }
 
-        // CARGAR NOMBRES ANTES DE CREAR LAS COLUMNAS
+        // ==========================================
+        // BUSCADOR
+        // ==========================================
+
+        TextField buscador = new TextField();
+
+        buscador.setPromptText(
+                "Buscar por usuario, curso, fecha o estado...");
+
+        buscador.setPrefHeight(40);
+
+        buscador.setStyle(
+                "-fx-background-color: white;" +
+                "-fx-border-color: #DCE3E8;" +
+                "-fx-border-radius: 8;" +
+                "-fx-background-radius: 8;" +
+                "-fx-padding: 10;");
+
+        buscador.textProperty().addListener(
+                (obs, anterior, nuevo) -> {
+
+            String filtro = nuevo == null
+                    ? ""
+                    : nuevo.toLowerCase().trim();
+
+            matriculasFiltradas.setPredicate(matricula -> {
+
+                if (filtro.isEmpty()) {
+                    return true;
+                }
+
+                String nombreUsuario =
+                        nombresUsuarios.getOrDefault(
+                                matricula.getUsuarioId().toString(),
+                                "Usuario desconocido");
+
+                String nombreCurso =
+                        nombresCursos.getOrDefault(
+                                matricula.getCursoId().toString(),
+                                "Curso desconocido");
+
+                return contiene(nombreUsuario, filtro)
+                        || contiene(nombreCurso, filtro)
+                        || contiene(matricula.getFecha(), filtro)
+                        || contiene(matricula.getEstado(), filtro);
+            });
+        });
+
+        // ==========================================
+        // COLUMNAS
+        // ==========================================
+
         cargarNombres();
 
         crearColumnas();
 
-        Button actualizar = new Button("Actualizar lista");
+        // ==========================================
+        // BOTONES
+        // ==========================================
+
+        Button actualizar = crearBoton(
+                "Actualizar lista", AZUL_OSCURO);
 
         actualizar.setOnAction(e -> {
-            cargarNombres();
-            cargarMatriculas();
-            tabla.refresh();
+
+            try {
+
+                cargarNombres();
+
+                crearColumnas();
+
+                cargarMatriculas(datosMatriculas);
+
+                tabla.refresh();
+
+            } catch (Exception ex) {
+
+                mostrarMensaje(
+                        Alert.AlertType.ERROR,
+                        ex.getMessage());
+            }
         });
 
-        contenido.getChildren().addAll(
-                new Label("Matrículas registradas:"),
-                tabla,
-                actualizar
-        );
+        Button eliminar = null;
 
-        // BOTÓN DE BAJA SOLAMENTE PARA ADMIN
+        // ==========================================
+        // DAR DE BAJA - SOLO ADMIN
+        // ==========================================
+
         if (esAdministrador) {
 
-            Button eliminar = new Button("Dar de baja");
+            eliminar = crearBoton(
+                    "Dar de baja", "#C0392B");
 
             eliminar.setOnAction(e -> {
 
@@ -254,8 +419,7 @@ public class VentanaMatriculas {
 
                     mostrarMensaje(
                             Alert.AlertType.WARNING,
-                            "Selecciona una matrícula."
-                    );
+                            "Selecciona una matrícula.");
 
                     return;
                 }
@@ -264,11 +428,14 @@ public class VentanaMatriculas {
                         new Alert(Alert.AlertType.CONFIRMATION);
 
                 confirmacion.setTitle("Dar de baja");
-                confirmacion.setHeaderText("¿Estás seguro?");
+
+                confirmacion.setHeaderText(
+                        "Confirmar baja de matrícula");
+
                 confirmacion.setContentText(
                         "¿Quieres eliminar esta matrícula?");
 
-                java.util.Optional<ButtonType> resultado =
+                Optional<ButtonType> resultado =
                         confirmacion.showAndWait();
 
                 if (resultado.isPresent()
@@ -276,43 +443,128 @@ public class VentanaMatriculas {
 
                     try {
 
-                        servicio.eliminar(seleccionada.getId());
+                        servicio.eliminar(
+                                seleccionada.getId());
 
-                        // REGISTRAR LOG
                         registrarLog("DELETE", "OK", null);
 
-                        cargarMatriculas();
+                        cargarMatriculas(datosMatriculas);
 
                         mostrarMensaje(
                                 Alert.AlertType.INFORMATION,
-                                "Matrícula eliminada correctamente."
-                        );
+                                "Matrícula eliminada correctamente.");
 
                     } catch (Exception ex) {
 
-                        // REGISTRAR ERROR
                         registrarLog(
                                 "DELETE",
                                 "ERROR",
-                                ex.getMessage()
-                        );
+                                ex.getMessage());
 
                         mostrarMensaje(
                                 Alert.AlertType.ERROR,
-                                ex.getMessage()
-                        );
+                                ex.getMessage());
                     }
                 }
             });
-
-            contenido.getChildren().add(eliminar);
         }
 
-        cargarMatriculas();
+        // ==========================================
+        // TARJETA DE MATRÍCULAS
+        // ==========================================
 
-        ventana.setScene(
-                new Scene(contenido, 850, 600)
-        );
+        Label tituloTabla = new Label(
+                "Matrículas registradas");
+
+        tituloTabla.setStyle(
+                "-fx-font-size: 17px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + AZUL_OSCURO + ";");
+
+        Label textoBuscar = new Label("Buscar matrículas");
+
+        textoBuscar.setStyle(
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + AZUL_OSCURO + ";");
+
+        VBox zonaBusqueda = new VBox(
+                8,
+                textoBuscar,
+                buscador);
+
+        HBox botones = new HBox(10);
+
+        botones.setAlignment(Pos.CENTER_LEFT);
+
+        botones.getChildren().add(actualizar);
+
+        if (esAdministrador) {
+            botones.getChildren().add(eliminar);
+        }
+
+        VBox tarjetaTabla = new VBox(
+                18,
+                tituloTabla,
+                zonaBusqueda,
+                tabla,
+                botones);
+
+        tarjetaTabla.setPadding(new Insets(22));
+
+        tarjetaTabla.setStyle(
+                "-fx-background-color: white;" +
+                "-fx-background-radius: 14;" +
+                "-fx-border-color: #E1E7EC;" +
+                "-fx-border-radius: 14;");
+
+        VBox.setVgrow(tabla, Priority.ALWAYS);
+
+        // ==========================================
+        // CONTENIDO
+        // ==========================================
+
+        VBox contenido;
+
+        if (esAdministrador) {
+
+            contenido = new VBox(
+                    22,
+                    cabecera,
+                    panelMatricula,
+                    tarjetaTabla);
+
+        } else {
+
+            contenido = new VBox(
+                    22,
+                    cabecera,
+                    tarjetaTabla);
+        }
+
+        contenido.setPadding(new Insets(30));
+
+        contenido.setStyle(
+                "-fx-background-color: " + FONDO + ";");
+
+        // ==========================================
+        // CARGAR MATRÍCULAS
+        // ==========================================
+
+        cargarMatriculas(datosMatriculas);
+
+        // ==========================================
+        // VENTANA
+        // ==========================================
+
+        Scene escena = new Scene(
+                contenido,
+                1050,
+                750);
+
+        ventana.setScene(escena);
+
+        ventana.setMinWidth(850);
+        ventana.setMinHeight(600);
 
         ventana.setOnHidden(e -> {
 
@@ -324,7 +576,10 @@ public class VentanaMatriculas {
         ventana.show();
     }
 
+    // ==========================================
     // CARGAR NOMBRES DE USUARIOS Y CURSOS
+    // ==========================================
+
     private void cargarNombres() {
 
         nombresUsuarios.clear();
@@ -334,20 +589,21 @@ public class VentanaMatriculas {
 
             nombresUsuarios.put(
                     usuario.getId().toString(),
-                    usuario.getNombre()
-            );
+                    usuario.getNombre());
         }
 
         for (Curso curso : cursoDAO.listar()) {
 
             nombresCursos.put(
                     curso.getId().toString(),
-                    curso.getNombre()
-            );
+                    curso.getNombre());
         }
     }
 
-    // CREAR COLUMNAS DE LA TABLA
+    // ==========================================
+    // CREAR COLUMNAS
+    // ==========================================
+
     private void crearColumnas() {
 
         tabla.getColumns().clear();
@@ -359,10 +615,7 @@ public class VentanaMatriculas {
                 new javafx.beans.property.SimpleStringProperty(
                         nombresUsuarios.getOrDefault(
                                 d.getValue().getUsuarioId().toString(),
-                                "Usuario desconocido"
-                        )
-                )
-        );
+                                "Usuario desconocido")));
 
         TableColumn<Matricula, String> cursoColumna =
                 new TableColumn<>("Curso");
@@ -371,31 +624,24 @@ public class VentanaMatriculas {
                 new javafx.beans.property.SimpleStringProperty(
                         nombresCursos.getOrDefault(
                                 d.getValue().getCursoId().toString(),
-                                "Curso desconocido"
-                        )
-                )
-        );
+                                "Curso desconocido")));
 
         TableColumn<Matricula, String> fechaColumna =
                 new TableColumn<>("Fecha");
 
         fechaColumna.setCellValueFactory(d ->
                 new javafx.beans.property.SimpleStringProperty(
-                        d.getValue().getFecha()
-                )
-        );
+                        d.getValue().getFecha()));
 
         TableColumn<Matricula, String> estadoColumna =
                 new TableColumn<>("Estado");
 
         estadoColumna.setCellValueFactory(d ->
                 new javafx.beans.property.SimpleStringProperty(
-                        d.getValue().getEstado()
-                )
-        );
+                        d.getValue().getEstado()));
 
         usuarioColumna.setPrefWidth(180);
-        cursoColumna.setPrefWidth(200);
+        cursoColumna.setPrefWidth(220);
         fechaColumna.setPrefWidth(130);
         estadoColumna.setPrefWidth(120);
 
@@ -403,41 +649,82 @@ public class VentanaMatriculas {
                 usuarioColumna,
                 cursoColumna,
                 fechaColumna,
-                estadoColumna
-        );
+                estadoColumna);
     }
 
+    // ==========================================
     // CARGAR MATRÍCULAS SEGÚN EL ROL
-    private void cargarMatriculas() {
+    // ==========================================
+
+    private void cargarMatriculas(
+            ObservableList<Matricula> datosMatriculas) {
+
+        datosMatriculas.clear();
 
         if (esAdministrador) {
 
-            tabla.setItems(
-                    FXCollections.observableArrayList(
-                            servicio.listar()
-                    )
-            );
+            for (Matricula matricula : servicio.listar()) {
+                datosMatriculas.add(matricula);
+            }
 
         } else {
 
-            tabla.setItems(
-                    FXCollections.observableArrayList(
-                            servicio.listarPorUsuario(
-                                    usuarioActual.getId()
-                            )
-                    )
-            );
+            for (Matricula matricula :
+                    servicio.listarPorUsuario(usuarioActual.getId())) {
+
+                datosMatriculas.add(matricula);
+            }
         }
     }
 
-    // MOSTRAR MENSAJES
+    // ==========================================
+    // BUSCADOR
+    // ==========================================
+
+    private boolean contiene(String texto, String filtro) {
+
+        return texto != null
+                && texto.toLowerCase().contains(filtro);
+    }
+
+    // ==========================================
+    // BOTONES
+    // ==========================================
+
+    private Button crearBoton(
+            String texto,
+            String color) {
+
+        Button boton = new Button(texto);
+
+        boton.setPrefHeight(40);
+
+        boton.setPadding(
+                new Insets(0, 18, 0, 18));
+
+        boton.setCursor(Cursor.HAND);
+
+        boton.setStyle(
+                "-fx-background-color: " + color + ";" +
+                "-fx-text-fill: white;" +
+                "-fx-font-weight: bold;" +
+                "-fx-background-radius: 8;" +
+                "-fx-cursor: hand;");
+
+        return boton;
+    }
+
+    // ==========================================
+    // MENSAJES
+    // ==========================================
+
     private void mostrarMensaje(
             Alert.AlertType tipo,
             String mensaje) {
 
         Alert alerta = new Alert(tipo);
 
-        alerta.setTitle("Academy");
+        alerta.setTitle("Erandio Academy");
         alerta.setHeaderText(null);
         alerta.setContentText(mensaje);
 

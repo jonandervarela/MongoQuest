@@ -1,3 +1,4 @@
+
 package com.mycompany.reto1_erandio_academy.vista;
 
 import com.mycompany.reto1_erandio_academy.dao.AsignacionDAO;
@@ -18,22 +19,17 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 
 import javafx.collections.FXCollections;
+import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -49,6 +45,14 @@ public class VentanaTareas {
 
     private final String rolActual;
     private final ObjectId empleadoIdActual;
+
+    private FilteredList<Tarea> tareasFiltradas;
+    private TextField buscador;
+
+    private static final String TINTA = "#12283A";
+    private static final String AZUL = "#1F6F8B";
+    private static final String FONDO = "#F2F5F7";
+    private static final String GRIS = "#64748B";
 
     public VentanaTareas() {
 
@@ -98,7 +102,8 @@ public class VentanaTareas {
                     operacion,
                     "tareas",
                     resultado,
-                    error);
+                    error
+            );
         } finally {
             logServicio.cerrar();
         }
@@ -109,33 +114,74 @@ public class VentanaTareas {
     public void mostrar() {
 
         Stage ventana = new Stage();
-        ventana.setTitle("Academy - Gestión de tareas");
+        ventana.setTitle("Erandio Academy - Gestión de tareas");
 
-        // COLUMNAS DE LA TABLA
+        boolean esProfesor = rolActual.equals("EMPLEADO");
+
+        // CABECERA
+
+        Label titulo = new Label("Gestión de tareas");
+        titulo.setFont(Font.font("Segoe UI", FontWeight.BOLD, 27));
+        titulo.setTextFill(Color.web(TINTA));
+
+        Label descripcion = new Label(
+                esProfesor
+                        ? "Crea y administra las tareas de tus cursos asignados."
+                        : "Consulta y administra las tareas de la academia."
+        );
+
+        descripcion.setFont(Font.font("Segoe UI", 14));
+        descripcion.setTextFill(Color.web(GRIS));
+
+        Label etiquetaRol = new Label(
+                esProfesor ? "PANEL DEL PROFESOR" : "PANEL DE ADMINISTRACIÓN"
+        );
+
+        etiquetaRol.setFont(Font.font("Segoe UI", FontWeight.BOLD, 11));
+        etiquetaRol.setTextFill(Color.web(AZUL));
+
+        VBox cabecera = new VBox(
+                7,
+                etiquetaRol,
+                titulo,
+                descripcion
+        );
+
+        cabecera.setPadding(new Insets(28, 30, 18, 30));
+
+        // TABLA
 
         TableColumn<Tarea, String> colTitulo =
                 new TableColumn<>("Título");
 
         colTitulo.setCellValueFactory(
-                new PropertyValueFactory<>("titulo"));
+                new PropertyValueFactory<>("titulo")
+        );
+        colTitulo.setMinWidth(180);
 
         TableColumn<Tarea, String> colProfesor =
                 new TableColumn<>("Profesor ID");
 
         colProfesor.setCellValueFactory(
-                new PropertyValueFactory<>("profesorId"));
+                new PropertyValueFactory<>("profesorId")
+        );
+        colProfesor.setMinWidth(180);
 
         TableColumn<Tarea, String> colCurso =
                 new TableColumn<>("Curso ID");
 
         colCurso.setCellValueFactory(
-                new PropertyValueFactory<>("cursoId"));
+                new PropertyValueFactory<>("cursoId")
+        );
+        colCurso.setMinWidth(180);
 
         TableColumn<Tarea, String> colFecha =
                 new TableColumn<>("Fecha límite");
 
         colFecha.setCellValueFactory(
-                new PropertyValueFactory<>("fechaLimite"));
+                new PropertyValueFactory<>("fechaLimite")
+        );
+        colFecha.setMinWidth(140);
 
         tabla.getColumns().clear();
 
@@ -143,19 +189,47 @@ public class VentanaTareas {
                 colTitulo,
                 colProfesor,
                 colCurso,
-                colFecha);
+                colFecha
+        );
 
         tabla.setColumnResizePolicy(
-                TableView.CONSTRAINED_RESIZE_POLICY);
+                TableView.CONSTRAINED_RESIZE_POLICY
+        );
+
+        tabla.setPlaceholder(
+                new Label("No hay tareas para mostrar.")
+        );
+
+        tabla.setStyle(
+                "-fx-background-color: white;"
+                + "-fx-border-color: #DCE4EA;"
+                + "-fx-border-radius: 8;"
+        );
+
+        // BUSCADOR
+
+        buscador = new TextField();
+        buscador.setPromptText(
+                "Buscar por título, profesor, curso o fecha..."
+        );
+        buscador.setPrefHeight(40);
+        buscador.setStyle(
+                "-fx-background-color: white;"
+                + "-fx-background-radius: 8;"
+                + "-fx-border-color: #DCE4EA;"
+                + "-fx-border-radius: 8;"
+                + "-fx-font-size: 13px;"
+        );
 
         // FORMULARIO
 
-        TextField titulo = new TextField();
-        titulo.setPromptText("Título de la tarea");
+        TextField campoTitulo = new TextField();
+        campoTitulo.setPromptText("Escribe el título de la tarea");
+        campoTitulo.setPrefWidth(350);
 
         ComboBox<Curso> curso = new ComboBox<>();
-
         curso.setPromptText("Selecciona uno de tus cursos");
+        curso.setPrefWidth(350);
 
         curso.setConverter(new javafx.util.StringConverter<Curso>() {
 
@@ -171,54 +245,80 @@ public class VentanaTareas {
         });
 
         DatePicker fecha = new DatePicker();
+        fecha.setPromptText("Selecciona fecha límite");
+        fecha.setPrefWidth(350);
 
-        // CARGAR CURSOS DEL PROFESOR
-
-        if (rolActual.equals("EMPLEADO")) {
+        if (esProfesor) {
             cargarCursosAsignados(curso);
         }
 
-        // BOTONES
-
-        Button guardar = new Button("Crear tarea");
-
-        Button guardarCambios =
-                new Button("Guardar cambios");
-
-        Button editar =
-                new Button("Editar seleccionada");
-
-        Button eliminar =
-                new Button("Eliminar tarea");
-
-        Button actualizar =
-                new Button("Actualizar lista");
-
-        Button exportar =
-                new Button("Exportar a Excel");
-
-        boolean esProfesor =
-                rolActual.equals("EMPLEADO");
-
-        // FORMULARIO VISUAL
+        Label tituloFormulario = new Label("Crear o modificar tarea");
+        tituloFormulario.setFont(
+                Font.font("Segoe UI", FontWeight.BOLD, 16)
+        );
+        tituloFormulario.setTextFill(Color.web(TINTA));
 
         GridPane formulario = new GridPane();
+        formulario.setHgap(18);
+        formulario.setVgap(14);
+        formulario.setPadding(new Insets(18));
 
-        formulario.setPadding(new Insets(10));
-        formulario.setHgap(10);
-        formulario.setVgap(10);
+        formulario.add(new Label("Título de la tarea"), 0, 0);
+        formulario.add(campoTitulo, 1, 0);
 
-        formulario.add(new Label("Título:"), 0, 0);
-        formulario.add(titulo, 1, 0);
-
-        formulario.add(new Label("Curso:"), 0, 1);
+        formulario.add(new Label("Curso asignado"), 0, 1);
         formulario.add(curso, 1, 1);
 
-        formulario.add(new Label("Fecha límite:"), 0, 2);
+        formulario.add(new Label("Fecha límite"), 0, 2);
         formulario.add(fecha, 1, 2);
 
-        formulario.setVisible(esProfesor);
-        formulario.setManaged(esProfesor);
+        formulario.setStyle(
+                "-fx-background-color: white;"
+                + "-fx-background-radius: 10;"
+                + "-fx-border-color: #DCE4EA;"
+                + "-fx-border-radius: 10;"
+        );
+
+        VBox panelFormulario = new VBox(
+                10,
+                tituloFormulario,
+                formulario
+        );
+
+        panelFormulario.setPadding(new Insets(15));
+        panelFormulario.setStyle(
+                "-fx-background-color: #EAF0F4;"
+                + "-fx-background-radius: 10;"
+        );
+
+        panelFormulario.setVisible(esProfesor);
+        panelFormulario.setManaged(esProfesor);
+
+        // BOTONES
+
+        Button guardar = crearBoton(
+                "Crear tarea", AZUL
+        );
+
+        Button guardarCambios = crearBoton(
+                "Guardar cambios", "#3976A8"
+        );
+
+        Button editar = crearBoton(
+                "Editar seleccionada", "#3976A8"
+        );
+
+        Button eliminar = crearBoton(
+                "Eliminar tarea", "#B3382C"
+        );
+
+        Button actualizar = crearBoton(
+                "Actualizar lista", "#64748B"
+        );
+
+        Button exportar = crearBoton(
+                "Exportar a Excel", "#16834A"
+        );
 
         guardar.setVisible(esProfesor);
         guardar.setManaged(esProfesor);
@@ -238,24 +338,26 @@ public class VentanaTareas {
 
             try {
 
-                if (titulo.getText().trim().isEmpty()
+                if (campoTitulo.getText().trim().isEmpty()
                         || curso.getValue() == null
                         || fecha.getValue() == null) {
 
                     mostrarAlerta(
                             Alert.AlertType.WARNING,
                             "Datos incompletos",
-                            "Completa el título, el curso y la fecha.");
+                            "Completa el título, el curso y la fecha."
+                    );
 
                     return;
                 }
 
                 Tarea tarea = new Tarea(
                         null,
-                        titulo.getText().trim(),
+                        campoTitulo.getText().trim(),
                         empleadoIdActual,
                         curso.getValue().getId(),
-                        fecha.getValue().toString());
+                        fecha.getValue().toString()
+                );
 
                 tareaServicio.registrar(tarea);
 
@@ -263,26 +365,29 @@ public class VentanaTareas {
 
                 cargarTareas();
 
-                limpiarFormulario(titulo, fecha, curso);
+                limpiarFormulario(campoTitulo, fecha, curso);
 
                 tareaEnEdicion = null;
 
                 mostrarAlerta(
                         Alert.AlertType.INFORMATION,
                         "Tarea creada",
-                        "La tarea se ha creado correctamente.");
+                        "La tarea se ha creado correctamente."
+                );
 
             } catch (Exception ex) {
 
                 registrarLog(
                         "INSERT",
                         "ERROR",
-                        ex.getMessage());
+                        ex.getMessage()
+                );
 
                 mostrarAlerta(
                         Alert.AlertType.ERROR,
                         "Error al crear tarea",
-                        ex.getMessage());
+                        ex.getMessage()
+                );
             }
         });
 
@@ -302,7 +407,8 @@ public class VentanaTareas {
                 mostrarAlerta(
                         Alert.AlertType.WARNING,
                         "Selecciona una tarea",
-                        "Selecciona una fila de la tabla.");
+                        "Selecciona una fila de la tabla."
+                );
 
                 return;
             }
@@ -312,18 +418,19 @@ public class VentanaTareas {
                 mostrarAlerta(
                         Alert.AlertType.ERROR,
                         "Sin permiso",
-                        "Solo puedes editar tus propias tareas.");
+                        "Solo puedes editar tus propias tareas."
+                );
 
                 return;
             }
 
             tareaEnEdicion = seleccionada;
 
-            titulo.setText(seleccionada.getTitulo());
+            campoTitulo.setText(seleccionada.getTitulo());
 
             fecha.setValue(
-                    LocalDate.parse(
-                            seleccionada.getFechaLimite()));
+                    LocalDate.parse(seleccionada.getFechaLimite())
+            );
 
             curso.getItems().stream()
                     .filter(c -> c.getId().equals(
@@ -334,9 +441,9 @@ public class VentanaTareas {
             mostrarAlerta(
                     Alert.AlertType.INFORMATION,
                     "Editar tarea",
-                    "Modifica los datos y pulsa Guardar cambios.");
+                    "Modifica los datos y pulsa Guardar cambios."
+            );
         });
-        
 
         // GUARDAR CAMBIOS
 
@@ -347,21 +454,23 @@ public class VentanaTareas {
                 mostrarAlerta(
                         Alert.AlertType.WARNING,
                         "Sin selección",
-                        "Primero selecciona una tarea para editar.");
+                        "Primero selecciona una tarea para editar."
+                );
 
                 return;
             }
 
             try {
 
-                if (titulo.getText().trim().isEmpty()
+                if (campoTitulo.getText().trim().isEmpty()
                         || curso.getValue() == null
                         || fecha.getValue() == null) {
 
                     mostrarAlerta(
                             Alert.AlertType.WARNING,
                             "Datos incompletos",
-                            "Completa todos los campos.");
+                            "Completa todos los campos."
+                    );
 
                     return;
                 }
@@ -371,19 +480,23 @@ public class VentanaTareas {
                     mostrarAlerta(
                             Alert.AlertType.ERROR,
                             "Sin permiso",
-                            "No puedes modificar esta tarea.");
+                            "No puedes modificar esta tarea."
+                    );
 
                     return;
                 }
 
                 tareaEnEdicion.setTitulo(
-                        titulo.getText().trim());
+                        campoTitulo.getText().trim()
+                );
 
                 tareaEnEdicion.setCursoId(
-                        curso.getValue().getId());
+                        curso.getValue().getId()
+                );
 
                 tareaEnEdicion.setFechaLimite(
-                        fecha.getValue().toString());
+                        fecha.getValue().toString()
+                );
 
                 tareaServicio.actualizar(tareaEnEdicion);
 
@@ -393,24 +506,27 @@ public class VentanaTareas {
 
                 tareaEnEdicion = null;
 
-                limpiarFormulario(titulo, fecha, curso);
+                limpiarFormulario(campoTitulo, fecha, curso);
 
                 mostrarAlerta(
                         Alert.AlertType.INFORMATION,
                         "Actualización correcta",
-                        "La tarea se ha actualizado.");
+                        "La tarea se ha actualizado."
+                );
 
             } catch (Exception ex) {
 
                 registrarLog(
                         "UPDATE",
                         "ERROR",
-                        ex.getMessage());
+                        ex.getMessage()
+                );
 
                 mostrarAlerta(
                         Alert.AlertType.ERROR,
                         "Error al actualizar",
-                        ex.getMessage());
+                        ex.getMessage()
+                );
             }
         });
 
@@ -426,7 +542,8 @@ public class VentanaTareas {
                 mostrarAlerta(
                         Alert.AlertType.WARNING,
                         "Selecciona una tarea",
-                        "Selecciona la tarea que quieres eliminar.");
+                        "Selecciona la tarea que quieres eliminar."
+                );
 
                 return;
             }
@@ -436,7 +553,8 @@ public class VentanaTareas {
                 mostrarAlerta(
                         Alert.AlertType.ERROR,
                         "Sin permiso",
-                        "No puedes eliminar esta tarea.");
+                        "No puedes eliminar esta tarea."
+                );
 
                 return;
             }
@@ -447,15 +565,15 @@ public class VentanaTareas {
             confirmacion.setTitle("Confirmar eliminación");
             confirmacion.setHeaderText("¿Eliminar esta tarea?");
             confirmacion.setContentText(
-                    seleccionada.getTitulo());
+                    seleccionada.getTitulo()
+            );
 
             if (confirmacion.showAndWait()
                     .orElse(ButtonType.CANCEL) == ButtonType.OK) {
 
                 try {
 
-                    tareaServicio.eliminar(
-                            seleccionada.getId());
+                    tareaServicio.eliminar(seleccionada.getId());
 
                     registrarLog("DELETE", "OK", null);
 
@@ -463,29 +581,32 @@ public class VentanaTareas {
 
                     tareaEnEdicion = null;
 
-                    limpiarFormulario(titulo, fecha, curso);
+                    limpiarFormulario(campoTitulo, fecha, curso);
 
                     mostrarAlerta(
                             Alert.AlertType.INFORMATION,
                             "Tarea eliminada",
-                            "La tarea se ha eliminado correctamente.");
+                            "La tarea se ha eliminado correctamente."
+                    );
 
                 } catch (Exception ex) {
 
                     registrarLog(
                             "DELETE",
                             "ERROR",
-                            ex.getMessage());
+                            ex.getMessage()
+                    );
 
                     mostrarAlerta(
                             Alert.AlertType.ERROR,
                             "Error",
-                            ex.getMessage());
+                            ex.getMessage()
+                    );
                 }
             }
         });
 
-        // EXPORTAR A EXCEL CON SELECCIÓN DE COLUMNAS
+        // EXPORTAR A EXCEL
 
         exportar.setOnAction(e -> {
 
@@ -497,25 +618,24 @@ public class VentanaTareas {
                 CheckBox cursoCol = new CheckBox("Curso ID");
                 CheckBox fechaCol = new CheckBox("Fecha límite");
 
-                // Columnas seleccionadas por defecto
-
                 tituloCol.setSelected(true);
                 profesor.setSelected(true);
                 cursoCol.setSelected(true);
                 fechaCol.setSelected(true);
 
-                VBox contenido = new VBox(10);
-
-                contenido.setPadding(new Insets(10));
-
-                contenido.getChildren().addAll(
-                        new Label("Selecciona las columnas que quieres exportar:"),
+                VBox contenido = new VBox(
+                        12,
+                        new Label(
+                                "Selecciona las columnas que quieres exportar:"
+                        ),
                         id,
                         tituloCol,
                         profesor,
                         cursoCol,
                         fechaCol
                 );
+
+                contenido.setPadding(new Insets(18));
 
                 Alert seleccion =
                         new Alert(Alert.AlertType.CONFIRMATION);
@@ -557,23 +677,23 @@ public class VentanaTareas {
                     mostrarAlerta(
                             Alert.AlertType.WARNING,
                             "Sin columnas",
-                            "Selecciona al menos una columna.");
+                            "Selecciona al menos una columna."
+                    );
 
                     return;
                 }
 
-                // Seleccionar dónde guardar el archivo
-
                 FileChooser selector = new FileChooser();
 
                 selector.setTitle("Guardar tareas");
-
                 selector.setInitialFileName("tareas.xlsx");
 
                 selector.getExtensionFilters().add(
                         new FileChooser.ExtensionFilter(
                                 "Archivo Excel",
-                                "*.xlsx"));
+                                "*.xlsx"
+                        )
+                );
 
                 File archivo =
                         selector.showSaveDialog(ventana);
@@ -586,12 +706,14 @@ public class VentanaTareas {
                     exportador.exportarTareas(
                             obtenerTareasVisibles(),
                             columnas,
-                            archivo.getAbsolutePath());
+                            archivo.getAbsolutePath()
+                    );
 
                     mostrarAlerta(
                             Alert.AlertType.INFORMATION,
                             "Exportación correcta",
-                            "El archivo se ha guardado correctamente.");
+                            "El archivo se ha guardado correctamente."
+                    );
                 }
 
             } catch (Exception ex) {
@@ -599,47 +721,129 @@ public class VentanaTareas {
                 mostrarAlerta(
                         Alert.AlertType.ERROR,
                         "Error al exportar",
-                        ex.getMessage());
+                        ex.getMessage()
+                );
             }
         });
 
-        // BOTONES
+        // BUSCADOR EN TIEMPO REAL
 
-        HBox botones = new HBox(10);
+        buscador.textProperty().addListener(
+                (observable, anterior, nuevo) -> {
 
-        botones.setPadding(new Insets(10));
+                    if (tareasFiltradas == null) {
+                        return;
+                    }
 
-        botones.getChildren().addAll(
+                    String filtro = nuevo == null
+                            ? ""
+                            : nuevo.trim().toLowerCase();
+
+                    tareasFiltradas.setPredicate(tarea -> {
+
+                        if (filtro.isEmpty()) {
+                            return true;
+                        }
+
+                        return contiene(tarea.getTitulo(), filtro)
+                                || contiene(
+                                        tarea.getProfesorId() == null
+                                                ? ""
+                                                : tarea.getProfesorId().toString(),
+                                        filtro
+                                )
+                                || contiene(
+                                        tarea.getCursoId() == null
+                                                ? ""
+                                                : tarea.getCursoId().toString(),
+                                        filtro
+                                )
+                                || contiene(tarea.getFechaLimite(), filtro);
+                    });
+                }
+        );
+
+        // BARRA DE ACCIONES
+
+        HBox botones = new HBox(
+                10,
                 guardar,
                 guardarCambios,
                 editar,
                 eliminar,
                 actualizar,
-                exportar);
+                exportar
+        );
 
-        // VENTANA PRINCIPAL
+        botones.setAlignment(Pos.CENTER_LEFT);
+        botones.setPadding(new Insets(8, 0, 8, 0));
 
-        VBox raiz = new VBox(10);
+        botones.setMinHeight(48);
 
-        raiz.setPadding(new Insets(15));
+        // PANEL DE TABLA
 
-        raiz.getChildren().addAll(
-                new Label("GESTIÓN DE TAREAS"),
-                formulario,
-                botones,
-                tabla);
+        Label tituloTabla = new Label("Listado de tareas");
+        tituloTabla.setFont(
+                Font.font("Segoe UI", FontWeight.BOLD, 17)
+        );
+        tituloTabla.setTextFill(Color.web(TINTA));
+
+        VBox panelTabla = new VBox(
+                12,
+                tituloTabla,
+                buscador,
+                tabla
+        );
+
+        panelTabla.setPadding(new Insets(18));
+        panelTabla.setStyle(
+                "-fx-background-color: white;"
+                + "-fx-background-radius: 10;"
+                + "-fx-border-color: #DCE4EA;"
+                + "-fx-border-radius: 10;"
+        );
+
+        VBox.setVgrow(tabla, Priority.ALWAYS);
+        VBox.setVgrow(panelTabla, Priority.ALWAYS);
+
+        // CONTENIDO PRINCIPAL
+
+        VBox contenidoPrincipal = new VBox(
+                16,
+                panelFormulario,
+                panelTabla,
+                botones
+        );
+
+        contenidoPrincipal.setPadding(
+                new Insets(0, 30, 25, 30)
+        );
+
+        VBox.setVgrow(panelTabla, Priority.ALWAYS);
+
+        VBox raiz = new VBox(
+                cabecera,
+                contenidoPrincipal
+        );
+
+        raiz.setStyle(
+                "-fx-background-color: " + FONDO + ";"
+        );
 
         cargarTareas();
 
-        Scene escena = new Scene(raiz, 1100, 650);
+        Scene escena = new Scene(raiz, 1150, 760);
 
         ventana.setScene(escena);
+        ventana.setMinWidth(900);
+        ventana.setMinHeight(620);
 
         ventana.setOnCloseRequest(e -> cerrarServicios());
 
+        ventana.centerOnScreen();
         ventana.show();
     }
-    
+
     // CARGAR CURSOS ASIGNADOS AL PROFESOR
 
     private void cargarCursosAsignados(ComboBox<Curso> combo) {
@@ -650,7 +854,8 @@ public class VentanaTareas {
 
             List<Document> asignaciones =
                     asignacionDAO.listarPorEmpleado(
-                            empleadoIdActual);
+                            empleadoIdActual
+                    );
 
             for (Document asignacion : asignaciones) {
 
@@ -673,7 +878,8 @@ public class VentanaTareas {
             mostrarAlerta(
                     Alert.AlertType.ERROR,
                     "Error al cargar cursos",
-                    ex.getMessage());
+                    ex.getMessage()
+            );
         }
     }
 
@@ -683,16 +889,47 @@ public class VentanaTareas {
 
         try {
 
-            tabla.setItems(
+            tareasFiltradas = new FilteredList<>(
                     FXCollections.observableArrayList(
-                            obtenerTareasVisibles()));
+                            obtenerTareasVisibles()
+                    ),
+                    tarea -> true
+            );
+
+            tabla.setItems(tareasFiltradas);
+
+            // Mantener el filtro si ya hay texto escrito
+            if (buscador != null
+                    && !buscador.getText().isBlank()) {
+
+                String filtro = buscador.getText()
+                        .trim().toLowerCase();
+
+                tareasFiltradas.setPredicate(tarea ->
+                        contiene(tarea.getTitulo(), filtro)
+                        || contiene(
+                                tarea.getProfesorId() == null
+                                        ? ""
+                                        : tarea.getProfesorId().toString(),
+                                filtro
+                        )
+                        || contiene(
+                                tarea.getCursoId() == null
+                                        ? ""
+                                        : tarea.getCursoId().toString(),
+                                filtro
+                        )
+                        || contiene(tarea.getFechaLimite(), filtro)
+                );
+            }
 
         } catch (Exception ex) {
 
             mostrarAlerta(
                     Alert.AlertType.ERROR,
                     "Error al cargar tareas",
-                    ex.getMessage());
+                    ex.getMessage()
+            );
         }
     }
 
@@ -706,7 +943,8 @@ public class VentanaTareas {
 
         if (rolActual.equals("EMPLEADO")) {
             return tareaServicio.listarPorProfesor(
-                    empleadoIdActual);
+                    empleadoIdActual
+            );
         }
 
         return new ArrayList<>();
@@ -723,7 +961,16 @@ public class VentanaTareas {
         return rolActual.equals("EMPLEADO")
                 && empleadoIdActual != null
                 && empleadoIdActual.equals(
-                        tarea.getProfesorId());
+                        tarea.getProfesorId()
+                );
+    }
+
+    // COMPROBAR TEXTO
+
+    private boolean contiene(String texto, String filtro) {
+
+        return texto != null
+                && texto.toLowerCase().contains(filtro);
     }
 
     // LIMPIAR FORMULARIO
@@ -738,6 +985,41 @@ public class VentanaTareas {
         curso.setValue(null);
     }
 
+    // ESTILO DE BOTONES
+
+    private Button crearBoton(String texto, String color) {
+
+        Button boton = new Button(texto);
+
+        boton.setFont(
+                Font.font("Segoe UI", FontWeight.BOLD, 12)
+        );
+
+        boton.setTextFill(Color.WHITE);
+        boton.setCursor(Cursor.HAND);
+        boton.setPadding(new Insets(11, 16, 11, 16));
+
+        String normal =
+                "-fx-background-color: " + color + ";"
+                + "-fx-background-radius: 7;";
+
+        String encima =
+                "-fx-background-color: derive(" + color + ", -15%);"
+                + "-fx-background-radius: 7;";
+
+        boton.setStyle(normal);
+
+        boton.setOnMouseEntered(e ->
+                boton.setStyle(encima)
+        );
+
+        boton.setOnMouseExited(e ->
+                boton.setStyle(normal)
+        );
+
+        return boton;
+    }
+
     // MOSTRAR ALERTAS
 
     private void mostrarAlerta(
@@ -747,13 +1029,14 @@ public class VentanaTareas {
 
         Alert alerta = new Alert(tipo);
 
-        alerta.setTitle(titulo);
-        alerta.setHeaderText(null);
+        alerta.setTitle("Erandio Academy");
+        alerta.setHeaderText(titulo);
 
         alerta.setContentText(
                 mensaje == null
                         ? "Ha ocurrido un error."
-                        : mensaje);
+                        : mensaje
+        );
 
         alerta.showAndWait();
     }
@@ -767,7 +1050,8 @@ public class VentanaTareas {
         } catch (Exception ex) {
             System.out.println(
                     "Error cerrando TareaServicio: "
-                    + ex.getMessage());
+                    + ex.getMessage()
+            );
         }
 
         try {
@@ -775,7 +1059,8 @@ public class VentanaTareas {
         } catch (Exception ex) {
             System.out.println(
                     "Error cerrando CursoServicio: "
-                    + ex.getMessage());
+                    + ex.getMessage()
+            );
         }
 
         try {
@@ -783,7 +1068,8 @@ public class VentanaTareas {
         } catch (Exception ex) {
             System.out.println(
                     "Error cerrando AsignacionDAO: "
-                    + ex.getMessage());
+                    + ex.getMessage()
+            );
         }
     }
 }
