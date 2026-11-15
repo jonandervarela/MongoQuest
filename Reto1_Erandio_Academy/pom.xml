@@ -58,7 +58,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.8</version>
                 <configuration>
-                    <mainClass>com.mycompany.reto1_erandio_academy.vista.VentanaEmpleados</mainClass>
+                    <mainClass>com.mycompany.reto1_erandio_academy.Reto1_Erandio_Academy</mainClass>
                 </configuration>
             </plugin>
 
