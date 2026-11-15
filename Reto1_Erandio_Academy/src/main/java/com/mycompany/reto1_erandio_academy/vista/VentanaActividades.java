@@ -1,3 +1,4 @@
+
 package com.mycompany.reto1_erandio_academy.vista;
 
 import com.mycompany.reto1_erandio_academy.modelo.Actividad;
@@ -7,21 +8,20 @@ import com.mycompany.reto1_erandio_academy.modelo.Usuario;
 import com.mycompany.reto1_erandio_academy.dao.CursoDAO;
 import com.mycompany.reto1_erandio_academy.servicio.ActividadServicio;
 import com.mycompany.reto1_erandio_academy.servicio.AsignacionServicio;
-import com.mycompany.reto1_erandio_academy.servicio.LogServicio;
 import com.mycompany.reto1_erandio_academy.servicio.SesionUsuario;
+import com.mycompany.reto1_erandio_academy.servicio.LogServicio;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
-
-import org.bson.Document;
-import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,16 +29,32 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.bson.Document;
+import org.bson.types.ObjectId;
+
 public class VentanaActividades {
 
-    private final ActividadServicio servicio = new ActividadServicio();
-    private final CursoDAO cursoDAO = new CursoDAO();
-    // NUEVO: para saber qué cursos imparte el profesor que ha entrado
-    private final AsignacionServicio asignacionServicio = new AsignacionServicio();
+    private final ActividadServicio servicio =
+            new ActividadServicio();
 
-    private final TableView<Actividad> tabla = new TableView<>();
+    private final CursoDAO cursoDAO =
+            new CursoDAO();
 
-    // REGISTRAR LOG EN MONGODB
+    private final AsignacionServicio asignacionServicio =
+            new AsignacionServicio();
+
+    private final TableView<Actividad> tabla =
+            new TableView<>();
+
+    private final String AZUL_OSCURO = "#12283A";
+    private final String AZUL = "#1F6F8B";
+    private final String FONDO = "#F2F5F7";
+    private final String GRIS = "#64748B";
+
+    // ==========================================
+    // REGISTRAR LOG
+    // ==========================================
+
     private void registrarLog(
             String operacion,
             String resultado,
@@ -57,154 +73,314 @@ public class VentanaActividades {
         }
     }
 
+    // ==========================================
+    // MOSTRAR VENTANA
+    // ==========================================
+
     public void mostrar() {
 
         Stage ventana = new Stage();
-        ventana.setTitle("Academy - Gestión de actividades");
 
-        // NUEVO: solo se ven los cursos que puede tocar quien ha entrado
-        List<Curso> cursosPermitidos = cursosDelUsuarioActual();
+        ventana.setTitle(
+                "Erandio Academy - Gestión de actividades");
+
+        // ==========================================
+        // LISTA DE ACTIVIDADES
+        // ==========================================
+
+        ObservableList<Actividad> datosActividades =
+                FXCollections.observableArrayList();
+
+        FilteredList<Actividad> actividadesFiltradas =
+                new FilteredList<>(datosActividades, a -> true);
+
+        tabla.setItems(actividadesFiltradas);
+
+        tabla.setColumnResizePolicy(
+                TableView.CONSTRAINED_RESIZE_POLICY);
+
+        tabla.setPlaceholder(
+                new Label("Selecciona un curso para ver sus actividades."));
+
+        // ==========================================
+        // SELECTOR DE CURSOS
+        // ==========================================
 
         ComboBox<Curso> cursos = new ComboBox<>();
 
         cursos.setPromptText("Selecciona un curso");
+        cursos.setMaxWidth(Double.MAX_VALUE);
+        cursos.setPrefHeight(42);
+
+        List<Curso> cursosPermitidos = cursosDelUsuarioActual();
 
         cursos.setItems(
-                FXCollections.observableArrayList(cursosPermitidos)
-        );
+                FXCollections.observableArrayList(cursosPermitidos));
 
-        cursos.setCellFactory(lista -> new ListCell<Curso>() {
+        cursos.setCellFactory(lista ->
+                new ListCell<Curso>() {
+
             @Override
-            protected void updateItem(Curso curso, boolean vacio) {
+            protected void updateItem(
+                    Curso curso,
+                    boolean vacio) {
+
                 super.updateItem(curso, vacio);
+
                 setText(vacio || curso == null
-                        ? null : curso.getNombre());
+                        ? null
+                        : curso.getNombre());
             }
         });
 
         cursos.setButtonCell(new ListCell<Curso>() {
+
             @Override
-            protected void updateItem(Curso curso, boolean vacio) {
+            protected void updateItem(
+                    Curso curso,
+                    boolean vacio) {
+
                 super.updateItem(curso, vacio);
+
                 setText(vacio || curso == null
-                        ? null : curso.getNombre());
+                        ? null
+                        : curso.getNombre());
             }
         });
 
-        TableColumn<Actividad, String> titulo =
+        // ==========================================
+        // COLUMNAS DE LA TABLA
+        // ==========================================
+
+        TableColumn<Actividad, String> tituloColumna =
                 new TableColumn<>("Título");
 
-        titulo.setCellValueFactory(
-                new javafx.scene.control.cell.PropertyValueFactory<>("titulo"));
+        tituloColumna.setCellValueFactory(
+                new PropertyValueFactory<>("titulo"));
 
-        TableColumn<Actividad, String> descripcion =
+        TableColumn<Actividad, String> descripcionColumna =
                 new TableColumn<>("Descripción");
 
-        descripcion.setCellValueFactory(
-                new javafx.scene.control.cell.PropertyValueFactory<>("descripcion"));
+        descripcionColumna.setCellValueFactory(
+                new PropertyValueFactory<>("descripcion"));
 
-        // NUEVO: columna para ver de un vistazo cuántos ejercicios tiene
         TableColumn<Actividad, Number> numEjercicios =
                 new TableColumn<>("Ejercicios");
 
         numEjercicios.setCellValueFactory(datos ->
                 new javafx.beans.property.SimpleIntegerProperty(
                         datos.getValue().getEjercicios() == null
-                                ? 0 : datos.getValue().getEjercicios().size()
-                ));
+                                ? 0 : datos.getValue().getEjercicios().size()));
+
+        tituloColumna.setPrefWidth(250);
+        descripcionColumna.setPrefWidth(500);
 
         tabla.getColumns().clear();
-        tabla.getColumns().addAll(titulo, descripcion, numEjercicios);
 
-        Button nuevo = new Button("Nueva actividad");
-        Button modificar = new Button("Modificar actividad");
-        Button eliminar = new Button("Eliminar actividad");
-        Button actualizar = new Button("Actualizar lista");
+        tabla.getColumns().addAll(
+                tituloColumna,
+                descripcionColumna,
+                numEjercicios);
 
-        estiloBoton(nuevo, AZUL);
-        estiloBoton(modificar, AZUL);
-        estiloBoton(eliminar, ROJO);
-        estiloBoton(actualizar, AZUL);
+        // ==========================================
+        // BUSCADOR
+        // ==========================================
 
-        // Si no hay ningún curso disponible, no tiene sentido crear nada
-        if (cursosPermitidos.isEmpty()) {
+        TextField buscador = new TextField();
+
+        buscador.setPromptText(
+                "Buscar por título o descripción...");
+
+        buscador.setPrefHeight(40);
+
+        buscador.setStyle(
+                "-fx-background-color: white;" +
+                "-fx-border-color: #DCE3E8;" +
+                "-fx-border-radius: 8;" +
+                "-fx-background-radius: 8;" +
+                "-fx-padding: 10;");
+
+        buscador.textProperty().addListener(
+                (obs, anterior, nuevo) -> {
+
+            String filtro = nuevo == null
+                    ? ""
+                    : nuevo.toLowerCase().trim();
+
+            actividadesFiltradas.setPredicate(actividad -> {
+
+                if (filtro.isEmpty()) {
+                    return true;
+                }
+
+                return contiene(
+                        actividad.getTitulo(), filtro)
+                        || contiene(
+                        actividad.getDescripcion(), filtro);
+            });
+        });
+
+        // ==========================================
+        // BOTONES
+        // ==========================================
+
+        Button nuevo = crearBoton(
+                "Nueva actividad", AZUL);
+
+        Button modificar = crearBoton(
+                "Modificar actividad", AZUL_OSCURO);
+
+        Button eliminar = crearBoton(
+                "Eliminar actividad", "#C0392B");
+
+        Button actualizar = crearBoton(
+                "Actualizar lista", AZUL_OSCURO);
+
+        if (cursosPermitidos.isEmpty() && esEmpleado()) {
             nuevo.setDisable(true);
         }
 
+        // ==========================================
         // FILTRAR POR CURSO
-        cursos.setOnAction(e -> cargarActividades(cursos));
+        // ==========================================
 
-        // REGISTRAR ACTIVIDAD
+        cursos.setOnAction(e -> {
+
+            buscador.clear();
+
+            cargarActividades(
+                    cursos,
+                    datosActividades);
+        });
+
+        // ==========================================
+        // NUEVA ACTIVIDAD
+        // ==========================================
+
         nuevo.setOnAction(e -> {
 
             Curso curso = cursos.getValue();
 
             if (curso == null) {
-                mostrarMensaje("Selecciona un curso.");
+
+                mostrarMensaje(
+                        Alert.AlertType.WARNING,
+                        "Selecciona un curso.");
+
                 return;
             }
 
             TextField tituloCampo = new TextField();
-            TextField descripcionCampo = new TextField();
+
+            tituloCampo.setPromptText(
+                    "Introduce el título de la actividad");
+
+            TextArea descripcionCampo = new TextArea();
+
+            descripcionCampo.setPromptText(
+                    "Introduce la descripción de la actividad");
+
+            descripcionCampo.setPrefRowCount(4);
+            descripcionCampo.setWrapText(true);
+
             PanelEjercicios panelEjercicios =
                     crearPanelEjercicios(new ArrayList<>());
 
             GridPane formulario = crearFormulario(
-                    tituloCampo, descripcionCampo, panelEjercicios.nodo);
+                    tituloCampo,
+                    descripcionCampo,
+                    panelEjercicios.nodo);
 
             Dialog<ButtonType> dialogo = new Dialog<>();
-            dialogo.setTitle("Nueva actividad");
-            dialogo.getDialogPane().setContent(formulario);
-            dialogo.getDialogPane().getButtonTypes().addAll(
-                    ButtonType.OK, ButtonType.CANCEL);
 
-            Optional<ButtonType> resultado = dialogo.showAndWait();
+            dialogo.setTitle("Nueva actividad");
+
+            dialogo.setHeaderText(
+                    "Registrar una nueva actividad");
+
+            dialogo.getDialogPane().setContent(formulario);
+
+            dialogo.getDialogPane().getButtonTypes().addAll(
+                    ButtonType.OK,
+                    ButtonType.CANCEL);
+
+            Optional<ButtonType> resultado =
+                    dialogo.showAndWait();
 
             if (resultado.isPresent()
                     && resultado.get() == ButtonType.OK) {
 
+                if (tituloCampo.getText().trim().isEmpty()
+                        || descripcionCampo.getText().trim().isEmpty()) {
+
+                    mostrarMensaje(
+                            Alert.AlertType.WARNING,
+                            "Completa el título y la descripción.");
+
+                    return;
+                }
+
                 try {
+
                     Actividad actividad = new Actividad(
                             null,
                             tituloCampo.getText().trim(),
                             descripcionCampo.getText().trim(),
                             curso.getId(),
-                            new ArrayList<>(panelEjercicios.lista)
-                    );
+                            new ArrayList<>(panelEjercicios.lista));
 
                     servicio.registrar(actividad);
 
-                    // REGISTRAR LOG
                     registrarLog("INSERT", "OK", null);
 
-                    cargarActividades(cursos);
-                    mostrarMensaje("Actividad registrada correctamente.");
+                    cargarActividades(
+                            cursos,
+                            datosActividades);
+
+                    mostrarMensaje(
+                            Alert.AlertType.INFORMATION,
+                            "Actividad registrada correctamente.");
 
                 } catch (Exception ex) {
 
-                    registrarLog("INSERT", "ERROR", ex.getMessage());
+                    registrarLog(
+                            "INSERT",
+                            "ERROR",
+                            ex.getMessage());
 
-                    mostrarMensaje(ex.getMessage());
+                    mostrarMensaje(
+                            Alert.AlertType.ERROR,
+                            ex.getMessage());
                 }
             }
         });
 
+        // ==========================================
         // MODIFICAR ACTIVIDAD
+        // ==========================================
+
         modificar.setOnAction(e -> {
 
             Actividad seleccionada =
                     tabla.getSelectionModel().getSelectedItem();
 
             if (seleccionada == null) {
-                mostrarMensaje("Selecciona una actividad.");
+
+                mostrarMensaje(
+                        Alert.AlertType.WARNING,
+                        "Selecciona una actividad.");
+
                 return;
             }
 
             TextField tituloCampo =
                     new TextField(seleccionada.getTitulo());
 
-            TextField descripcionCampo =
-                    new TextField(seleccionada.getDescripcion());
+            TextArea descripcionCampo =
+                    new TextArea(seleccionada.getDescripcion());
+
+            descripcionCampo.setPrefRowCount(4);
+            descripcionCampo.setWrapText(true);
 
             PanelEjercicios panelEjercicios = crearPanelEjercicios(
                     seleccionada.getEjercicios() == null
@@ -212,53 +388,89 @@ public class VentanaActividades {
                             : seleccionada.getEjercicios());
 
             GridPane formulario = crearFormulario(
-                    tituloCampo, descripcionCampo, panelEjercicios.nodo);
+                    tituloCampo,
+                    descripcionCampo,
+                    panelEjercicios.nodo);
 
             Dialog<ButtonType> dialogo = new Dialog<>();
-            dialogo.setTitle("Modificar actividad");
-            dialogo.getDialogPane().setContent(formulario);
-            dialogo.getDialogPane().getButtonTypes().addAll(
-                    ButtonType.OK, ButtonType.CANCEL);
 
-            Optional<ButtonType> resultado = dialogo.showAndWait();
+            dialogo.setTitle("Modificar actividad");
+
+            dialogo.setHeaderText(
+                    "Editar información de la actividad");
+
+            dialogo.getDialogPane().setContent(formulario);
+
+            dialogo.getDialogPane().getButtonTypes().addAll(
+                    ButtonType.OK,
+                    ButtonType.CANCEL);
+
+            Optional<ButtonType> resultado =
+                    dialogo.showAndWait();
 
             if (resultado.isPresent()
                     && resultado.get() == ButtonType.OK) {
 
+                if (tituloCampo.getText().trim().isEmpty()
+                        || descripcionCampo.getText().trim().isEmpty()) {
+
+                    mostrarMensaje(
+                            Alert.AlertType.WARNING,
+                            "Completa el título y la descripción.");
+
+                    return;
+                }
+
                 try {
+
                     Actividad actualizada = new Actividad(
                             seleccionada.getId(),
                             tituloCampo.getText().trim(),
                             descripcionCampo.getText().trim(),
                             seleccionada.getCursoId(),
-                            new ArrayList<>(panelEjercicios.lista)
-                    );
+                            new ArrayList<>(panelEjercicios.lista));
 
                     servicio.modificar(actualizada);
 
-                    // REGISTRAR LOG
                     registrarLog("UPDATE", "OK", null);
 
-                    cargarActividades(cursos);
-                    mostrarMensaje("Actividad modificada correctamente.");
+                    cargarActividades(
+                            cursos,
+                            datosActividades);
+
+                    mostrarMensaje(
+                            Alert.AlertType.INFORMATION,
+                            "Actividad modificada correctamente.");
 
                 } catch (Exception ex) {
 
-                    registrarLog("UPDATE", "ERROR", ex.getMessage());
+                    registrarLog(
+                            "UPDATE",
+                            "ERROR",
+                            ex.getMessage());
 
-                    mostrarMensaje(ex.getMessage());
+                    mostrarMensaje(
+                            Alert.AlertType.ERROR,
+                            ex.getMessage());
                 }
             }
         });
 
+        // ==========================================
         // ELIMINAR ACTIVIDAD
+        // ==========================================
+
         eliminar.setOnAction(e -> {
 
             Actividad seleccionada =
                     tabla.getSelectionModel().getSelectedItem();
 
             if (seleccionada == null) {
-                mostrarMensaje("Selecciona una actividad.");
+
+                mostrarMensaje(
+                        Alert.AlertType.WARNING,
+                        "Selecciona una actividad.");
+
                 return;
             }
 
@@ -266,58 +478,206 @@ public class VentanaActividades {
                     new Alert(Alert.AlertType.CONFIRMATION);
 
             confirmacion.setTitle("Eliminar actividad");
-            confirmacion.setHeaderText("¿Estás seguro?");
-            confirmacion.setContentText(seleccionada.getTitulo());
 
-            if (confirmacion.showAndWait().orElse(ButtonType.CANCEL)
-                    == ButtonType.OK) {
+            confirmacion.setHeaderText(
+                    "Confirmar eliminación");
+
+            confirmacion.setContentText(
+                    "¿Estás seguro de eliminar la actividad: "
+                    + seleccionada.getTitulo() + "?");
+
+            Optional<ButtonType> resultado =
+                    confirmacion.showAndWait();
+
+            if (resultado.isPresent()
+                    && resultado.get() == ButtonType.OK) {
 
                 try {
+
                     servicio.eliminar(seleccionada.getId());
 
-                    // REGISTRAR LOG
                     registrarLog("DELETE", "OK", null);
 
-                    cargarActividades(cursos);
-                    mostrarMensaje("Actividad eliminada correctamente.");
+                    cargarActividades(
+                            cursos,
+                            datosActividades);
+
+                    mostrarMensaje(
+                            Alert.AlertType.INFORMATION,
+                            "Actividad eliminada correctamente.");
 
                 } catch (Exception ex) {
 
-                    registrarLog("DELETE", "ERROR", ex.getMessage());
+                    registrarLog(
+                            "DELETE",
+                            "ERROR",
+                            ex.getMessage());
 
-                    mostrarMensaje(ex.getMessage());
+                    mostrarMensaje(
+                            Alert.AlertType.ERROR,
+                            ex.getMessage());
                 }
             }
         });
 
+        // ==========================================
         // ACTUALIZAR LISTA
-        actualizar.setOnAction(e -> cargarActividades(cursos));
+        // ==========================================
 
-        VBox contenido = new VBox(
+        actualizar.setOnAction(e -> {
+
+            buscador.clear();
+
+            cargarActividades(
+                    cursos,
+                    datosActividades);
+        });
+
+        // ==========================================
+        // CABECERA
+        // ==========================================
+
+        Label etiqueta = new Label("ADMINISTRACIÓN ACADÉMICA");
+
+        etiqueta.setStyle(
+                "-fx-text-fill: " + AZUL + ";" +
+                "-fx-font-size: 11px;" +
+                "-fx-font-weight: bold;");
+
+        Label titulo = new Label("Gestión de actividades");
+
+        titulo.setStyle(
+                "-fx-text-fill: " + AZUL_OSCURO + ";" +
+                "-fx-font-size: 27px;" +
+                "-fx-font-weight: bold;");
+
+        Label descripcion = new Label(
+                "Crea, consulta, modifica y administra las actividades de cada curso.");
+
+        descripcion.setStyle(
+                "-fx-text-fill: " + GRIS + ";" +
+                "-fx-font-size: 13px;");
+
+        VBox cabecera = new VBox(
+                6,
+                etiqueta,
+                titulo,
+                descripcion);
+
+        // ==========================================
+        // PANEL DE SELECCIÓN DE CURSO
+        // ==========================================
+
+        Label tituloCurso = new Label("Seleccionar curso");
+
+        tituloCurso.setStyle(
+                "-fx-font-size: 16px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + AZUL_OSCURO + ";");
+
+        VBox panelCurso = new VBox(
                 12,
-                new Label("Seleccionar curso:"),
-                cursos,
-                tabla,
+                tituloCurso,
+                cursos);
+
+        panelCurso.setPadding(new Insets(20));
+
+        panelCurso.setStyle(
+                "-fx-background-color: white;" +
+                "-fx-background-radius: 14;" +
+                "-fx-border-color: #E1E7EC;" +
+                "-fx-border-radius: 14;");
+
+        // ==========================================
+        // PANEL DE ACTIVIDADES
+        // ==========================================
+
+        Label tituloTabla = new Label(
+                "Actividades registradas");
+
+        tituloTabla.setStyle(
+                "-fx-font-size: 17px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + AZUL_OSCURO + ";");
+
+        Label textoBuscar = new Label("Buscar actividades");
+
+        textoBuscar.setStyle(
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + AZUL_OSCURO + ";");
+
+        VBox zonaBusqueda = new VBox(
+                8,
+                textoBuscar,
+                buscador);
+
+        HBox botones = new HBox(
+                10,
                 nuevo,
                 modificar,
                 eliminar,
-                actualizar
-        );
+                actualizar);
 
-        contenido.setPadding(new Insets(20));
-        contenido.setStyle("-fx-background-color: #F2F5F7;");
+        botones.setAlignment(Pos.CENTER_LEFT);
+        botones.setSpacing(10);
+        botones.setPadding(new Insets(5, 0, 0, 0));
 
-        // NUEVO: aviso si el profesor no tiene ningún curso asignado
+        botones.setOnMouseEntered(e -> {
+        });
+
+        VBox tarjetaTabla = new VBox(
+                18,
+                tituloTabla,
+                zonaBusqueda,
+                tabla,
+                botones);
+
+        tarjetaTabla.setPadding(new Insets(22));
+
+        tarjetaTabla.setStyle(
+                "-fx-background-color: white;" +
+                "-fx-background-radius: 14;" +
+                "-fx-border-color: #E1E7EC;" +
+                "-fx-border-radius: 14;");
+
+        VBox.setVgrow(tabla, Priority.ALWAYS);
+
+        // ==========================================
+        // CONTENIDO PRINCIPAL
+        // ==========================================
+
+        VBox contenido = new VBox(
+                22,
+                cabecera,
+                panelCurso,
+                tarjetaTabla);
+
+        contenido.setPadding(new Insets(30));
+
+        contenido.setStyle(
+                "-fx-background-color: " + FONDO + ";");
+
         if (esEmpleado() && cursosPermitidos.isEmpty()) {
             Label aviso = new Label(
                     "No tienes ningún curso asignado todavía. "
                     + "Pide al administrador que te asigne uno.");
-            contenido.getChildren().add(0, aviso);
+            aviso.setStyle("-fx-text-fill: #C0392B; -fx-font-weight: bold;");
+            contenido.getChildren().add(1, aviso);
         }
 
-        cargarActividades(cursos);
+        // ==========================================
+        // VENTANA
+        // ==========================================
 
-        ventana.setScene(new Scene(contenido, 750, 600));
+        Scene escena = new Scene(
+                contenido,
+                1100,
+                750);
+
+        ventana.setScene(escena);
+
+        ventana.setMinWidth(850);
+        ventana.setMinHeight(600);
 
         ventana.setOnHidden(e -> {
             servicio.cerrar();
@@ -328,30 +688,76 @@ public class VentanaActividades {
         ventana.show();
     }
 
-    // NUEVO: cursos que puede gestionar el usuario que ha entrado.
-    // Admin ve todos los cursos; un empleado solo ve los suyos.
+    // ==========================================
+    // CREAR FORMULARIO
+    // ==========================================
+
+    private GridPane crearFormulario(
+            TextField titulo,
+            Control descripcion,
+            javafx.scene.Node panelEjercicios) {
+
+        GridPane formulario = new GridPane();
+
+        formulario.setPadding(new Insets(20));
+        formulario.setHgap(15);
+        formulario.setVgap(15);
+
+        titulo.setPrefWidth(350);
+
+        descripcion.setPrefWidth(350);
+
+        formulario.add(
+                new Label("Título:"),
+                0,
+                0);
+
+        formulario.add(
+                titulo,
+                1,
+                0);
+
+        formulario.add(
+                new Label("Descripción:"),
+                0,
+                1);
+
+        formulario.add(
+                descripcion,
+                1,
+                1);
+
+        formulario.add(new Label("Ejercicios:"), 0, 2);
+        formulario.add(panelEjercicios, 1, 2);
+
+        return formulario;
+    }
+
+    // ==========================================
+    // CURSOS PERMITIDOS PARA EL USUARIO ACTUAL
+    // ==========================================
+
     private List<Curso> cursosDelUsuarioActual() {
 
         List<Curso> todos = cursoDAO.listar();
-
         Usuario usuario = SesionUsuario.getUsuarioActual();
 
         if (usuario == null || !esEmpleado()) {
-            // Admin (o sesión no identificada): sin filtro
             return todos;
         }
 
         if (usuario.getEmpleadoId() == null) {
-            // Cuenta de empleado sin ficha de empleado enlazada
             return new ArrayList<>();
         }
 
         Set<ObjectId> cursosAsignados = new HashSet<>();
 
-        for (Document asignacion
-                : asignacionServicio.listarPorEmpleado(usuario.getEmpleadoId())) {
-
-            cursosAsignados.add(asignacion.getObjectId("cursoId"));
+        for (Document asignacion :
+                asignacionServicio.listarPorEmpleado(usuario.getEmpleadoId())) {
+            ObjectId cursoId = asignacion.getObjectId("cursoId");
+            if (cursoId != null) {
+                cursosAsignados.add(cursoId);
+            }
         }
 
         List<Curso> permitidos = new ArrayList<>();
@@ -369,74 +775,47 @@ public class VentanaActividades {
         return SesionUsuario.tieneRol("EMPLEADO");
     }
 
-    private GridPane crearFormulario(
-            TextField titulo, TextField descripcion, javafx.scene.Node panelEjercicios) {
+    // ==========================================
+    // PANEL PARA GESTIONAR EJERCICIOS
+    // ==========================================
 
-        GridPane formulario = new GridPane();
-        formulario.setPadding(new Insets(15));
-        formulario.setHgap(10);
-        formulario.setVgap(10);
-
-        formulario.add(new Label("Título:"), 0, 0);
-        formulario.add(titulo, 1, 0);
-
-        formulario.add(new Label("Descripción:"), 0, 1);
-        formulario.add(descripcion, 1, 1);
-
-        // NUEVO: ejercicios de la actividad
-        formulario.add(new Label("Ejercicios:"), 0, 2);
-        formulario.add(panelEjercicios, 1, 2);
-
-        return formulario;
-    }
-
-    // NUEVO: lista editable de ejercicios (añadir / quitar preguntas)
     private PanelEjercicios crearPanelEjercicios(List<Ejercicio> iniciales) {
 
         ObservableList<Ejercicio> lista =
                 FXCollections.observableArrayList(iniciales);
 
         ListView<Ejercicio> listaVisual = new ListView<>(lista);
-        listaVisual.setPrefHeight(100);
-        listaVisual.setPrefWidth(260);
+        listaVisual.setPrefHeight(110);
+        listaVisual.setPrefWidth(350);
 
         TextField nuevaPregunta = new TextField();
         nuevaPregunta.setPromptText("Pregunta del ejercicio");
 
-        Button anadir = new Button("Añadir");
-        estiloBoton(anadir, AZUL);
+        Button anadir = crearBoton("Añadir", AZUL);
         anadir.setOnAction(e -> {
-
             String texto = nuevaPregunta.getText().trim();
-
             if (!texto.isEmpty()) {
                 lista.add(new Ejercicio(texto));
                 nuevaPregunta.clear();
             }
         });
 
-        Button quitar = new Button("Quitar seleccionado");
-        estiloBoton(quitar, ROJO);
+        Button quitar = crearBoton("Quitar seleccionado", "#C0392B");
         quitar.setOnAction(e -> {
-
             Ejercicio seleccionado =
                     listaVisual.getSelectionModel().getSelectedItem();
-
             if (seleccionado != null) {
                 lista.remove(seleccionado);
             }
         });
 
         HBox fila = new HBox(8, nuevaPregunta, anadir, quitar);
-
-        VBox contenedor = new VBox(6, listaVisual, fila);
+        VBox contenedor = new VBox(8, listaVisual, fila);
 
         return new PanelEjercicios(contenedor, lista);
     }
 
-    // Pequeña envoltura para devolver a la vez el panel visual y su lista
     private static class PanelEjercicios {
-
         final VBox nodo;
         final ObservableList<Ejercicio> lista;
 
@@ -446,60 +825,93 @@ public class VentanaActividades {
         }
     }
 
-    private void cargarActividades(ComboBox<Curso> cursos) {
+    // ==========================================
+    // CARGAR ACTIVIDADES POR CURSO
+    // ==========================================
+
+    private void cargarActividades(
+            ComboBox<Curso> cursos,
+            ObservableList<Actividad> datosActividades) {
 
         Curso curso = cursos.getValue();
 
+        datosActividades.clear();
+
         if (curso == null) {
-            tabla.getItems().clear();
             return;
         }
 
-        tabla.setItems(
-                FXCollections.observableArrayList(
-                        servicio.listarPorCurso(curso.getId())
-                )
-        );
+        try {
+
+            for (Actividad actividad :
+                    servicio.listarPorCurso(curso.getId())) {
+
+                datosActividades.add(actividad);
+            }
+
+            tabla.refresh();
+
+        } catch (Exception ex) {
+
+            mostrarMensaje(
+                    Alert.AlertType.ERROR,
+                    ex.getMessage());
+        }
     }
 
-    private void mostrarMensaje(String mensaje) {
+    // ==========================================
+    // BUSCADOR
+    // ==========================================
 
-        Alert alerta = new Alert(Alert.AlertType.INFORMATION);
-        alerta.setTitle("Academy");
+    private boolean contiene(
+            String texto,
+            String filtro) {
+
+        return texto != null
+                && texto.toLowerCase().contains(filtro);
+    }
+
+    // ==========================================
+    // CREAR BOTONES
+    // ==========================================
+
+    private Button crearBoton(
+            String texto,
+            String color) {
+
+        Button boton = new Button(texto);
+
+        boton.setPrefHeight(40);
+
+        boton.setPadding(
+                new Insets(0, 16, 0, 16));
+
+        boton.setCursor(Cursor.HAND);
+
+        boton.setStyle(
+                "-fx-background-color: " + color + ";" +
+                "-fx-text-fill: white;" +
+                "-fx-font-weight: bold;" +
+                "-fx-background-radius: 8;" +
+                "-fx-cursor: hand;");
+
+        return boton;
+    }
+
+    // ==========================================
+    // MOSTRAR MENSAJES
+    // ==========================================
+
+    private void mostrarMensaje(
+            Alert.AlertType tipo,
+            String mensaje) {
+
+        Alert alerta = new Alert(tipo);
+
+        alerta.setTitle("Erandio Academy");
         alerta.setHeaderText(null);
         alerta.setContentText(mensaje);
+
         alerta.showAndWait();
-    }
-
-    // ---------- Estilo visual (misma técnica que el resto de la app) ----------
-    private static final String AZUL = "#1F6F8B";
-    private static final String ROJO = "#B3382C";
-
-    private void estiloBoton(Button boton, String colorAcento) {
-
-        String base =
-                "-fx-background-color: white;"
-                + "-fx-text-fill: #12283A;"
-                + "-fx-font-size: 13px;"
-                + "-fx-font-weight: bold;"
-                + "-fx-background-radius: 8;"
-                + "-fx-border-color: #D5DDE3;"
-                + "-fx-border-radius: 8;"
-                + "-fx-cursor: hand;"
-                + "-fx-padding: 8 16 8 16;";
-
-        String encima =
-                "-fx-background-color: " + colorAcento + ";"
-                + "-fx-text-fill: white;"
-                + "-fx-font-size: 13px;"
-                + "-fx-font-weight: bold;"
-                + "-fx-background-radius: 8;"
-                + "-fx-border-radius: 8;"
-                + "-fx-cursor: hand;"
-                + "-fx-padding: 8 16 8 16;";
-
-        boton.setStyle(base);
-        boton.setOnMouseEntered(e -> boton.setStyle(encima));
-        boton.setOnMouseExited(e -> boton.setStyle(base));
     }
 }

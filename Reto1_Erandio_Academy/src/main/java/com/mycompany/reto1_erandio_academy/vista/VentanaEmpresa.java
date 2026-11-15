@@ -7,15 +7,11 @@ import com.mycompany.reto1_erandio_academy.servicio.SesionUsuario;
 import com.mycompany.reto1_erandio_academy.servicio.LogServicio;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 public class VentanaEmpresa {
@@ -24,88 +20,262 @@ public class VentanaEmpresa {
 
     private Empresa empresaActual;
 
+    private final String AZUL_OSCURO = "#12283A";
+    private final String AZUL = "#1F6F8B";
+    private final String FONDO = "#F2F5F7";
+    private final String GRIS = "#64748B";
+
     public VentanaEmpresa() {
         empresaServicio = new EmpresaServicio();
     }
+
+    // ==========================================
+    // REGISTRAR LOG
+    // ==========================================
+
+    private void registrarLog(
+            String operacion,
+            String resultado,
+            String error) {
+
+        LogServicio logServicio = new LogServicio();
+
+        try {
+            logServicio.registrar(
+                    operacion,
+                    "empresa",
+                    resultado,
+                    error);
+        } finally {
+            logServicio.cerrar();
+        }
+    }
+
+    // ==========================================
+    // MOSTRAR VENTANA
+    // ==========================================
 
     public void mostrar() {
 
         // SOLO ADMINISTRADORES
         if (!SesionUsuario.tieneRol("ADMIN")) {
+
             mostrarAlerta(
                     Alert.AlertType.ERROR,
                     "Acceso denegado",
-                    "Solo el administrador puede gestionar la empresa."
-            );
+                    "Solo el administrador puede gestionar la empresa.");
+
             empresaServicio.cerrar();
             return;
         }
 
         Stage ventana = new Stage();
-        ventana.setTitle("Academy - Datos de la empresa");
 
+        ventana.setTitle(
+                "Erandio Academy - Datos de la empresa");
+
+        // ==========================================
         // CAMPOS
-        TextField nombre = new TextField();
-        TextField sector = new TextField();
-        TextField actividad = new TextField();
-        TextField direccion = new TextField();
-        TextField estado = new TextField();
+        // ==========================================
+
+        TextField nombre = crearCampo(
+                "Nombre de la empresa");
+
+        TextField sector = crearCampo(
+                "Sector empresarial");
+
+        TextField actividad = crearCampo(
+                "Actividad de la empresa");
+
+        TextField direccion = crearCampo(
+                "Dirección");
+
+        TextField estado = crearCampo(
+                "Estado de la empresa");
 
         TextArea descripcion = new TextArea();
-        descripcion.setPrefRowCount(4);
+
+        descripcion.setPromptText(
+                "Describe la actividad y características de la empresa...");
+
+        descripcion.setPrefRowCount(5);
         descripcion.setWrapText(true);
 
+        descripcion.setStyle(
+                "-fx-background-color: white;" +
+                "-fx-border-color: #DCE3E8;" +
+                "-fx-border-radius: 8;" +
+                "-fx-background-radius: 8;" +
+                "-fx-padding: 8;");
+
+        // ==========================================
+        // CABECERA
+        // ==========================================
+
+        Label etiqueta = new Label("ADMINISTRACIÓN");
+
+        etiqueta.setStyle(
+                "-fx-text-fill: " + AZUL + ";" +
+                "-fx-font-size: 11px;" +
+                "-fx-font-weight: bold;");
+
+        Label titulo = new Label(
+                "Datos de la empresa");
+
+        titulo.setStyle(
+                "-fx-text-fill: " + AZUL_OSCURO + ";" +
+                "-fx-font-size: 27px;" +
+                "-fx-font-weight: bold;");
+
+        Label subtitulo = new Label(
+                "Consulta y actualiza la información de Erandio Academy.");
+
+        subtitulo.setStyle(
+                "-fx-text-fill: " + GRIS + ";" +
+                "-fx-font-size: 13px;");
+
+        VBox cabecera = new VBox(
+                6,
+                etiqueta,
+                titulo,
+                subtitulo);
+
+        // ==========================================
         // FORMULARIO
+        // ==========================================
+
         GridPane formulario = new GridPane();
 
-        formulario.setPadding(new Insets(15));
-        formulario.setHgap(12);
-        formulario.setVgap(12);
+        formulario.setPadding(new Insets(22));
+        formulario.setHgap(18);
+        formulario.setVgap(16);
 
-        formulario.add(new Label("Nombre:"), 0, 0);
-        formulario.add(nombre, 1, 0);
+        ColumnConstraints columnaEtiquetas =
+                new ColumnConstraints();
 
-        formulario.add(new Label("Sector:"), 0, 1);
-        formulario.add(sector, 1, 1);
+        columnaEtiquetas.setMinWidth(120);
 
-        formulario.add(new Label("Actividad:"), 0, 2);
-        formulario.add(actividad, 1, 2);
+        ColumnConstraints columnaCampos =
+                new ColumnConstraints();
 
-        formulario.add(new Label("Dirección:"), 0, 3);
-        formulario.add(direccion, 1, 3);
+        columnaCampos.setHgrow(Priority.ALWAYS);
+        columnaCampos.setFillWidth(true);
 
-        formulario.add(new Label("Descripción:"), 0, 4);
-        formulario.add(descripcion, 1, 4);
+        formulario.getColumnConstraints().addAll(
+                columnaEtiquetas,
+                columnaCampos);
 
-        formulario.add(new Label("Estado:"), 0, 5);
-        formulario.add(estado, 1, 5);
+        agregarCampo(
+                formulario,
+                "Nombre:",
+                nombre,
+                0);
 
+        agregarCampo(
+                formulario,
+                "Sector:",
+                sector,
+                1);
+
+        agregarCampo(
+                formulario,
+                "Actividad:",
+                actividad,
+                2);
+
+        agregarCampo(
+                formulario,
+                "Dirección:",
+                direccion,
+                3);
+
+        agregarCampo(
+                formulario,
+                "Descripción:",
+                descripcion,
+                4);
+
+        agregarCampo(
+                formulario,
+                "Estado:",
+                estado,
+                5);
+
+        // ==========================================
         // BOTONES
-        Button guardar = new Button("Guardar cambios");
-        Button cerrar = new Button("Cerrar");
+        // ==========================================
 
-        HBox botones = new HBox(10, guardar, cerrar);
+        Button guardar = crearBoton(
+                "Guardar cambios",
+                AZUL);
+
+        Button cerrar = crearBoton(
+                "Cerrar",
+                AZUL_OSCURO);
+
+        HBox botones = new HBox(
+                12,
+                guardar,
+                cerrar);
+
+        botones.setAlignment(Pos.CENTER_RIGHT);
+
+        // ==========================================
+        // TARJETA
+        // ==========================================
+
+        Label tituloFormulario = new Label(
+                "Información general");
+
+        tituloFormulario.setStyle(
+                "-fx-font-size: 17px;" +
+                "-fx-font-weight: bold;" +
+                "-fx-text-fill: " + AZUL_OSCURO + ";");
+
+        VBox tarjeta = new VBox(
+                18,
+                tituloFormulario,
+                formulario,
+                botones);
+
+        tarjeta.setPadding(new Insets(22));
+
+        tarjeta.setStyle(
+                "-fx-background-color: white;" +
+                "-fx-background-radius: 14;" +
+                "-fx-border-color: #E1E7EC;" +
+                "-fx-border-radius: 14;");
+
+        // ==========================================
+        // CONTENIDO PRINCIPAL
+        // ==========================================
 
         VBox contenido = new VBox(
-                15,
-                new Label("CONFIGURACIÓN DE ERANDIO ACADEMY"),
-                formulario,
-                botones
-        );
+                22,
+                cabecera,
+                tarjeta);
 
-        contenido.setPadding(new Insets(20));
+        contenido.setPadding(new Insets(30));
 
+        contenido.setStyle(
+                "-fx-background-color: " + FONDO + ";");
+
+        // ==========================================
         // CARGAR DATOS DE MONGODB
+        // ==========================================
+
         try {
 
-            empresaActual = empresaServicio.obtenerEmpresa();
+            empresaActual =
+                    empresaServicio.obtenerEmpresa();
 
             if (empresaActual == null) {
+
                 mostrarAlerta(
                         Alert.AlertType.WARNING,
                         "Empresa no encontrada",
-                        "No existen datos de empresa en MongoDB."
-                );
+                        "No existen datos de empresa en MongoDB.");
+
                 empresaServicio.cerrar();
                 return;
             }
@@ -121,94 +291,170 @@ public class VentanaEmpresa {
 
             mostrarAlerta(
                     Alert.AlertType.ERROR,
-                    "Error",
-                    ex.getMessage()
-            );
+                    "Error al cargar los datos",
+                    ex.getMessage());
 
             empresaServicio.cerrar();
             return;
         }
 
+        // ==========================================
         // GUARDAR CAMBIOS
+        // ==========================================
+
         guardar.setOnAction(e -> {
 
             try {
 
                 if (nombre.getText().trim().isEmpty()) {
+
                     mostrarAlerta(
                             Alert.AlertType.WARNING,
                             "Campo obligatorio",
-                            "El nombre de la empresa es obligatorio."
-                    );
+                            "El nombre de la empresa es obligatorio.");
+
                     return;
                 }
 
-                empresaActual.setNombre(nombre.getText().trim());
-                empresaActual.setSector(sector.getText().trim());
-                empresaActual.setActividad(actividad.getText().trim());
-                empresaActual.setDireccion(direccion.getText().trim());
+                empresaActual.setNombre(
+                        nombre.getText().trim());
+
+                empresaActual.setSector(
+                        sector.getText().trim());
+
+                empresaActual.setActividad(
+                        actividad.getText().trim());
+
+                empresaActual.setDireccion(
+                        direccion.getText().trim());
+
                 empresaActual.setDescripcion(
-                        descripcion.getText().trim()
-                );
-                empresaActual.setEstado(estado.getText().trim());
+                        descripcion.getText().trim());
+
+                empresaActual.setEstado(
+                        estado.getText().trim());
 
                 empresaServicio.actualizar(empresaActual);
 
-                // REGISTRAR LOG DE ÉXITO
-                LogServicio logServicio = new LogServicio();
-
-                try {
-                    logServicio.registrar(
-                            "UPDATE",
-                            "empresa",
-                            "OK",
-                            null
-                    );
-                } finally {
-                    logServicio.cerrar();
-                }
+                registrarLog(
+                        "UPDATE",
+                        "OK",
+                        null);
 
                 mostrarAlerta(
                         Alert.AlertType.INFORMATION,
                         "Guardado correctamente",
-                        "Los datos de Erandio Academy se han actualizado."
-                );
+                        "Los datos de Erandio Academy se han actualizado.");
 
             } catch (Exception ex) {
 
-                // REGISTRAR LOG DE ERROR
-                LogServicio logServicio = new LogServicio();
-
-                try {
-                    logServicio.registrar(
-                            "UPDATE",
-                            "empresa",
-                            "ERROR",
-                            ex.getMessage()
-                    );
-                } finally {
-                    logServicio.cerrar();
-                }
+                registrarLog(
+                        "UPDATE",
+                        "ERROR",
+                        ex.getMessage());
 
                 mostrarAlerta(
                         Alert.AlertType.ERROR,
                         "Error al guardar",
-                        ex.getMessage()
-                );
+                        ex.getMessage());
             }
         });
 
-        // CERRAR VENTANA
+        // ==========================================
+        // CERRAR
+        // ==========================================
+
         cerrar.setOnAction(e -> ventana.close());
 
-        ventana.setScene(new Scene(contenido, 650, 500));
+        ventana.setScene(
+                new Scene(contenido, 950, 720));
 
-        ventana.setOnCloseRequest(e -> empresaServicio.cerrar());
+        ventana.setMinWidth(750);
+        ventana.setMinHeight(600);
+
+        ventana.setOnHidden(e ->
+                empresaServicio.cerrar());
 
         ventana.show();
     }
 
+    // ==========================================
+    // CREAR CAMPOS
+    // ==========================================
+
+    private TextField crearCampo(String texto) {
+
+        TextField campo = new TextField();
+
+        campo.setPromptText(texto);
+        campo.setPrefHeight(40);
+
+        campo.setStyle(
+                "-fx-background-color: white;" +
+                "-fx-border-color: #DCE3E8;" +
+                "-fx-border-radius: 8;" +
+                "-fx-background-radius: 8;" +
+                "-fx-padding: 10;");
+
+        return campo;
+    }
+
+    // ==========================================
+    // AGREGAR CAMPO AL FORMULARIO
+    // ==========================================
+
+    private void agregarCampo(
+            GridPane formulario,
+            String etiqueta,
+            Control campo,
+            int fila) {
+
+        Label label = new Label(etiqueta);
+
+        label.setStyle(
+                "-fx-text-fill: " + AZUL_OSCURO + ";" +
+                "-fx-font-weight: bold;" +
+                "-fx-font-size: 13px;");
+
+        GridPane.setHgrow(
+                campo,
+                Priority.ALWAYS);
+
+        formulario.add(label, 0, fila);
+        formulario.add(campo, 1, fila);
+    }
+
+    // ==========================================
+    // CREAR BOTONES
+    // ==========================================
+
+    private Button crearBoton(
+            String texto,
+            String color) {
+
+        Button boton = new Button(texto);
+
+        boton.setPrefHeight(42);
+
+        boton.setPadding(
+                new Insets(0, 20, 0, 20));
+
+        boton.setCursor(Cursor.HAND);
+
+        boton.setStyle(
+                "-fx-background-color: " + color + ";" +
+                "-fx-text-fill: white;" +
+                "-fx-font-weight: bold;" +
+                "-fx-background-radius: 8;" +
+                "-fx-cursor: hand;");
+
+        return boton;
+    }
+
+    // ==========================================
     // MOSTRAR ALERTAS
+    // ==========================================
+
     private void mostrarAlerta(
             Alert.AlertType tipo,
             String titulo,
@@ -216,12 +462,13 @@ public class VentanaEmpresa {
 
         Alert alerta = new Alert(tipo);
 
-        alerta.setTitle("Academy");
+        alerta.setTitle("Erandio Academy");
         alerta.setHeaderText(titulo);
 
         alerta.setContentText(
-                mensaje == null ? "Error desconocido" : mensaje
-        );
+                mensaje == null
+                ? "Error desconocido"
+                : mensaje);
 
         alerta.showAndWait();
     }

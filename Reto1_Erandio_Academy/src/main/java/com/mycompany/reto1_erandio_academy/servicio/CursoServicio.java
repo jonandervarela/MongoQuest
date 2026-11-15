@@ -3,6 +3,7 @@ package com.mycompany.reto1_erandio_academy.servicio;
 
 import com.mycompany.reto1_erandio_academy.dao.CursoDAO;
 import com.mycompany.reto1_erandio_academy.modelo.Curso;
+
 import java.util.List;
 import org.bson.types.ObjectId;
 
@@ -22,9 +23,19 @@ public class CursoServicio {
         cursoDAO.insertar(curso);
     }
 
-    // Listar cursos
+    // Listar todos los cursos
     public List<Curso> listar() {
         return cursoDAO.listar();
+    }
+
+    // Listar solamente cursos activos
+    public List<Curso> listarActivos() {
+
+        List<Curso> cursos = cursoDAO.listar();
+
+        return cursos.stream()
+                .filter(Curso::isActivo)
+                .toList();
     }
 
     // Buscar curso por ID
