@@ -1,4 +1,3 @@
-
 package com.mycompany.reto1_erandio_academy.servicio;
 
 import com.mycompany.reto1_erandio_academy.dao.AsignacionDAO;
@@ -54,6 +53,17 @@ public class AsignacionServicio {
         }
 
         return asignacionDAO.listarPorCurso(cursoId);
+    }
+
+    // NUEVO: consultar los cursos asignados a un profesor (empleado)
+    public List<Document> listarPorEmpleado(ObjectId empleadoId) {
+
+        if (empleadoId == null) {
+            throw new IllegalArgumentException(
+                    "El empleado no es válido.");
+        }
+
+        return asignacionDAO.listarPorEmpleado(empleadoId);
     }
 
     // Quitar profesor de un curso

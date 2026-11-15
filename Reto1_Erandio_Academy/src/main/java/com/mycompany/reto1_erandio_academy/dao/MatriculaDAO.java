@@ -1,4 +1,3 @@
-
 package com.mycompany.reto1_erandio_academy.dao;
 
 import com.mycompany.reto1_erandio_academy.modelo.Matricula;
@@ -53,16 +52,7 @@ public class MatriculaDAO {
         List<Matricula> matriculas = new ArrayList<>();
 
         for (Document documento : coleccion.find()) {
-
-            Matricula matricula = new Matricula(
-                    documento.getObjectId("_id"),
-                    documento.getObjectId("usuarioId"),
-                    documento.getObjectId("cursoId"),
-                    documento.getString("fecha"),
-                    documento.getString("estado")
-            );
-
-            matriculas.add(matricula);
+            matriculas.add(convertir(documento));
         }
 
         return matriculas;
@@ -76,13 +66,21 @@ public class MatriculaDAO {
         for (Document documento : coleccion.find(
                 Filters.eq("usuarioId", usuarioId))) {
 
-            matriculas.add(new Matricula(
-                    documento.getObjectId("_id"),
-                    documento.getObjectId("usuarioId"),
-                    documento.getObjectId("cursoId"),
-                    documento.getString("fecha"),
-                    documento.getString("estado")
-            ));
+            matriculas.add(convertir(documento));
+        }
+
+        return matriculas;
+    }
+
+    // NUEVO: buscar matrículas de un curso (para "Consultar alumnos")
+    public List<Matricula> listarPorCurso(ObjectId cursoId) {
+
+        List<Matricula> matriculas = new ArrayList<>();
+
+        for (Document documento : coleccion.find(
+                Filters.eq("cursoId", cursoId))) {
+
+            matriculas.add(convertir(documento));
         }
 
         return matriculas;
@@ -113,6 +111,19 @@ public class MatriculaDAO {
         return coleccion.deleteOne(
                 Filters.eq("_id", id)
         ).getDeletedCount() > 0;
+    }
+
+    // NUEVO: convertir documento a Matricula, leyendo también el progreso
+    private Matricula convertir(Document documento) {
+
+        return new Matricula(
+                documento.getObjectId("_id"),
+                documento.getObjectId("usuarioId"),
+                documento.getObjectId("cursoId"),
+                documento.getString("fecha"),
+                documento.getString("estado"),
+                documento.getInteger("progreso", 0)
+        );
     }
 
     // Cerrar conexión

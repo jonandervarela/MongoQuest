@@ -1,7 +1,9 @@
-
 package com.mycompany.reto1_erandio_academy.modelo;
 
 import org.bson.types.ObjectId;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Actividad {
 
@@ -10,16 +12,30 @@ public class Actividad {
     private String descripcion;
     private ObjectId cursoId;
 
+    // NUEVO: ejercicios embebidos (antes siempre se guardaba vacío)
+    private List<Ejercicio> ejercicios;
+
     public Actividad() {
+        this.ejercicios = new ArrayList<>();
     }
 
     public Actividad(ObjectId id, String titulo,
             String descripcion, ObjectId cursoId) {
 
+        this(id, titulo, descripcion, cursoId, new ArrayList<>());
+    }
+
+    // NUEVO: constructor con ejercicios
+    public Actividad(ObjectId id, String titulo,
+            String descripcion, ObjectId cursoId,
+            List<Ejercicio> ejercicios) {
+
         this.id = id;
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.cursoId = cursoId;
+        this.ejercicios = (ejercicios == null)
+                ? new ArrayList<>() : ejercicios;
     }
 
     public ObjectId getId() {
@@ -52,5 +68,14 @@ public class Actividad {
 
     public void setCursoId(ObjectId cursoId) {
         this.cursoId = cursoId;
+    }
+
+    public List<Ejercicio> getEjercicios() {
+        return ejercicios;
+    }
+
+    public void setEjercicios(List<Ejercicio> ejercicios) {
+        this.ejercicios = (ejercicios == null)
+                ? new ArrayList<>() : ejercicios;
     }
 }

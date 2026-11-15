@@ -1,7 +1,7 @@
-
 package com.mycompany.reto1_erandio_academy.dao;
 
 import com.mycompany.reto1_erandio_academy.modelo.Actividad;
+import com.mycompany.reto1_erandio_academy.modelo.Ejercicio;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -38,8 +38,8 @@ public class ActividadDAO {
                 .append("titulo", actividad.getTitulo())
                 .append("descripcion", actividad.getDescripcion())
                 .append("cursoId", actividad.getCursoId())
-                // MongoDB exige este campo obligatorio
-                .append("ejercicios", new ArrayList<>());
+                // NUEVO: los ejercicios ya no se guardan siempre vacíos
+                .append("ejercicios", ejerciciosADocumentos(actividad.getEjercicios()));
 
         coleccion.insertOne(documento);
 
@@ -101,7 +101,10 @@ public class ActividadDAO {
                 Updates.combine(
                         Updates.set("titulo", actividad.getTitulo()),
                         Updates.set("descripcion", actividad.getDescripcion()),
-                        Updates.set("cursoId", actividad.getCursoId())
+                        Updates.set("cursoId", actividad.getCursoId()),
+                        // NUEVO: antes modificar NO tocaba los ejercicios
+                        Updates.set("ejercicios",
+                                ejerciciosADocumentos(actividad.getEjercicios()))
                 )
         ).getModifiedCount() > 0;
     }
@@ -118,6 +121,41 @@ public class ActividadDAO {
         ).getDeletedCount() > 0;
     }
 
+    // NUEVO: convertir List<Ejercicio> a List<Document> para Mongo
+    private List<Document> ejerciciosADocumentos(List<Ejercicio> ejercicios) {
+
+        List<Document> documentos = new ArrayList<>();
+
+        if (ejercicios == null) {
+            return documentos;
+        }
+
+        for (Ejercicio ejercicio : ejercicios) {
+            documentos.add(new Document("pregunta", ejercicio.getPregunta()));
+        }
+
+        return documentos;
+    }
+
+    // NUEVO: leer el array "ejercicios" de un documento de Mongo
+    @SuppressWarnings("unchecked")
+    private List<Ejercicio> documentosAEjercicios(Document documento) {
+
+        List<Ejercicio> ejercicios = new ArrayList<>();
+
+        List<Document> lista = (List<Document>) documento.get("ejercicios");
+
+        if (lista == null) {
+            return ejercicios;
+        }
+
+        for (Document item : lista) {
+            ejercicios.add(new Ejercicio(item.getString("pregunta")));
+        }
+
+        return ejercicios;
+    }
+
     // Convertir documento MongoDB a Actividad
     private Actividad convertirActividad(Document documento) {
 
@@ -125,7 +163,8 @@ public class ActividadDAO {
                 documento.getObjectId("_id"),
                 documento.getString("titulo"),
                 documento.getString("descripcion"),
-                documento.getObjectId("cursoId")
+                documento.getObjectId("cursoId"),
+                documentosAEjercicios(documento)
         );
     }
 
