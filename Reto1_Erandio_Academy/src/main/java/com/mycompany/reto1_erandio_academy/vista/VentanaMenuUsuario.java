@@ -1,3 +1,4 @@
+
 package com.mycompany.reto1_erandio_academy.vista;
 
 import com.mycompany.reto1_erandio_academy.modelo.Usuario;
@@ -52,6 +53,7 @@ public class VentanaMenuUsuario {
         Button botonTemario = crearBoton("Consultar temario", AZUL);
         Button botonPerfil = crearBoton("Actualizar mi perfil", AZUL);
         Button botonValoraciones = crearBoton("Valorar cursos", AZUL);
+        Button botonCursos = crearBoton("Cursos disponibles", AZUL);
         Button botonMatriculas = crearBoton("Consultar mis matrículas", AZUL);
         Button botonBaja = crearBoton("Darme de baja de un curso", AZUL);
         Button botonEliminar = crearBoton("Eliminar mi cuenta", ROJO);
@@ -61,6 +63,11 @@ public class VentanaMenuUsuario {
         botonTemario.setOnAction(e -> new VentanaTemarioUsuario().mostrar());
         botonPerfil.setOnAction(e -> new VentanaPerfilUsuario().mostrar());
         botonValoraciones.setOnAction(e -> new VentanaValoraciones().mostrar());
+
+        botonCursos.setOnAction(
+                e -> new VentanaCursosDisponibles().mostrar()
+        );
+
         botonMatriculas.setOnAction(e -> new VentanaMatriculas().mostrar());
         botonBaja.setOnAction(e -> new VentanaBajaMatricula().mostrar());
         botonEliminar.setOnAction(e -> new VentanaEliminarCuenta().mostrar());
@@ -77,6 +84,7 @@ public class VentanaMenuUsuario {
                 botonTemario,
                 botonPerfil,
                 botonValoraciones,
+                botonCursos,
                 botonMatriculas,
                 botonBaja,
                 botonEliminar,

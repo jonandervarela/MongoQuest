@@ -2,11 +2,10 @@
 package com.mycompany.reto1_erandio_academy.vista;
 
 import com.mycompany.reto1_erandio_academy.dao.UsuarioDAO;
-import com.mycompany.reto1_erandio_academy.dao.CursoDAO;
 import com.mycompany.reto1_erandio_academy.modelo.Usuario;
-import com.mycompany.reto1_erandio_academy.modelo.Curso;
 import com.mycompany.reto1_erandio_academy.modelo.Matricula;
 import com.mycompany.reto1_erandio_academy.servicio.MatriculaServicio;
+import com.mycompany.reto1_erandio_academy.servicio.SesionUsuario;
 
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -21,16 +20,29 @@ import java.util.List;
 public class VentanaBajaMatricula {
 
     private UsuarioDAO usuarioDAO;
-    private CursoDAO cursoDAO;
     private MatriculaServicio matriculaServicio;
 
     private ComboBox<Usuario> comboUsuarios;
     private TableView<Matricula> tablaMatriculas;
 
+    private Usuario usuarioActual;
+    private boolean esAdministrador;
+
     public void mostrar() {
 
+        usuarioActual = SesionUsuario.getUsuarioActual();
+
+        if (usuarioActual == null) {
+            mostrarMensaje(
+                    Alert.AlertType.ERROR,
+                    "No hay ningún usuario conectado."
+            );
+            return;
+        }
+
+        esAdministrador = SesionUsuario.tieneRol("ADMIN");
+
         usuarioDAO = new UsuarioDAO();
-        cursoDAO = new CursoDAO();
         matriculaServicio = new MatriculaServicio();
 
         Stage ventana = new Stage();
@@ -44,6 +56,7 @@ public class VentanaBajaMatricula {
         comboUsuarios.setPrefWidth(300);
 
         comboUsuarios.setConverter(new StringConverter<Usuario>() {
+
             @Override
             public String toString(Usuario usuario) {
                 return usuario == null ? "" : usuario.getNombre();
@@ -55,8 +68,7 @@ public class VentanaBajaMatricula {
             }
         });
 
-        comboUsuarios.setOnAction(e -> cargarMatriculas());
-
+        // TABLA DE MATRÍCULAS
         tablaMatriculas = new TableView<>();
 
         TableColumn<Matricula, String> columnaCurso =
@@ -96,14 +108,17 @@ public class VentanaBajaMatricula {
         columnaFecha.setPrefWidth(120);
         columnaEstado.setPrefWidth(120);
 
+        // BOTÓN DAR DE BAJA
         Button botonBaja = new Button("Darse de baja");
 
         botonBaja.setOnAction(e -> darDeBaja());
 
+        // BOTÓN ACTUALIZAR
         Button botonActualizar = new Button("Actualizar lista");
 
         botonActualizar.setOnAction(e -> cargarMatriculas());
 
+        // CONTENIDO
         VBox contenido = new VBox(
                 15,
                 titulo,
@@ -116,22 +131,50 @@ public class VentanaBajaMatricula {
 
         contenido.setPadding(new Insets(25));
 
-        cargarUsuarios();
+        // PERMISOS SEGÚN EL ROL
+        if (esAdministrador) {
 
-        Scene escena = new Scene(contenido, 650, 550);
+            // ADMIN PUEDE SELECCIONAR CUALQUIER USUARIO
+            cargarUsuarios();
 
-        ventana.setTitle("Academy - Baja de matrícula");
+            comboUsuarios.setOnAction(e -> cargarMatriculas());
+
+        } else {
+
+            // USUARIO SOLO PUEDE VER SUS MATRÍCULAS
+            etiquetaUsuario.setVisible(false);
+            etiquetaUsuario.setManaged(false);
+
+            comboUsuarios.setVisible(false);
+            comboUsuarios.setManaged(false);
+
+            cargarMatriculas();
+        }
+
+        Scene escena = new Scene(contenido, 800, 550);
+
+        ventana.setTitle(
+                esAdministrador
+                        ? "Academy - Gestión de bajas"
+                        : "Academy - Mis bajas de matrícula"
+        );
+
         ventana.setScene(escena);
-        ventana.show();
 
         ventana.setOnHidden(e -> {
             matriculaServicio.cerrar();
             usuarioDAO.cerrar();
-            cursoDAO.cerrar();
         });
+
+        ventana.show();
     }
 
+    // CARGAR USUARIOS (SOLO ADMIN)
     private void cargarUsuarios() {
+
+        if (!esAdministrador) {
+            return;
+        }
 
         List<Usuario> usuarios = usuarioDAO.listar();
 
@@ -140,13 +183,23 @@ public class VentanaBajaMatricula {
         );
     }
 
+    // CARGAR MATRÍCULAS
     private void cargarMatriculas() {
 
-        Usuario usuario = comboUsuarios.getValue();
+        Usuario usuario;
 
-        if (usuario == null) {
-            tablaMatriculas.getItems().clear();
-            return;
+        if (esAdministrador) {
+
+            usuario = comboUsuarios.getValue();
+
+            if (usuario == null) {
+                tablaMatriculas.getItems().clear();
+                return;
+            }
+
+        } else {
+
+            usuario = usuarioActual;
         }
 
         List<Matricula> matriculas =
@@ -157,9 +210,11 @@ public class VentanaBajaMatricula {
         );
     }
 
+    // DAR DE BAJA UNA MATRÍCULA
     private void darDeBaja() {
 
-        Matricula matricula = tablaMatriculas.getSelectionModel()
+        Matricula matricula = tablaMatriculas
+                .getSelectionModel()
                 .getSelectedItem();
 
         if (matricula == null) {
@@ -170,7 +225,29 @@ public class VentanaBajaMatricula {
             return;
         }
 
-        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        // COMPROBAR QUE EL USUARIO SOLO MODIFICA SUS MATRÍCULAS
+        if (!esAdministrador
+                && !matricula.getUsuarioId().equals(usuarioActual.getId())) {
+
+            mostrarMensaje(
+                    Alert.AlertType.ERROR,
+                    "No tienes permiso para modificar esta matrícula."
+            );
+            return;
+        }
+
+        if (!"ACTIVA".equals(matricula.getEstado())) {
+            mostrarMensaje(
+                    Alert.AlertType.WARNING,
+                    "Esta matrícula ya no está activa."
+            );
+            return;
+        }
+
+        Alert confirmacion = new Alert(
+                Alert.AlertType.CONFIRMATION
+        );
+
         confirmacion.setTitle("Confirmar baja");
         confirmacion.setHeaderText(null);
         confirmacion.setContentText(
@@ -184,6 +261,7 @@ public class VentanaBajaMatricula {
                     matriculaServicio.eliminar(matricula.getId());
 
             if (resultado) {
+
                 mostrarMensaje(
                         Alert.AlertType.INFORMATION,
                         "Matrícula eliminada correctamente."
@@ -192,6 +270,7 @@ public class VentanaBajaMatricula {
                 cargarMatriculas();
 
             } else {
+
                 mostrarMensaje(
                         Alert.AlertType.ERROR,
                         "No se ha podido eliminar la matrícula."
@@ -200,7 +279,10 @@ public class VentanaBajaMatricula {
         }
     }
 
-    private void mostrarMensaje(Alert.AlertType tipo, String mensaje) {
+    // MOSTRAR MENSAJES
+    private void mostrarMensaje(
+            Alert.AlertType tipo,
+            String mensaje) {
 
         Alert alerta = new Alert(tipo);
         alerta.setTitle("Academy");
