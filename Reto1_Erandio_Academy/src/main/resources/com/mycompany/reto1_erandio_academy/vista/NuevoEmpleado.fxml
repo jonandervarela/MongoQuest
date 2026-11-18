@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+
+<GridPane fx:id="formulario" hgap="12.0" prefHeight="420.0" prefWidth="500.0" vgap="12.0"
+          xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+          fx:controller="com.mycompany.reto1_erandio_academy.vista.NuevoEmpleadoController">
+
+    <padding><Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/></padding>
+
+    <Label text="Nombre:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+    <TextField fx:id="nombre" promptText="Nombre completo" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+    <Label text="Puesto:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+    <TextField fx:id="puesto" promptText="Puesto" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+    <Label text="Departamento:" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+    <TextField fx:id="departamento" promptText="Departamento" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+    <Label text="Correo:" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+    <TextField fx:id="email" promptText="Correo electrónico" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+    <Label text="Teléfono:" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+    <TextField fx:id="telefono" promptText="Número de teléfono" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+
+    <Label text="Contraseña:" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+    <PasswordField fx:id="password" promptText="Contraseña (mínimo 6 caracteres)" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+
+    <CheckBox fx:id="activo" selected="true" text="Empleado activo" GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+
+    <Button fx:id="guardar" text="Guardar profesor" onAction="#onGuardar" GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+</GridPane>

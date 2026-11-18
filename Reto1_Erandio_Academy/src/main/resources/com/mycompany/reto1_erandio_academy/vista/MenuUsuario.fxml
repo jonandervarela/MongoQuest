@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="raiz" prefWidth="420.0"
+      xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.mycompany.reto1_erandio_academy.vista.MenuUsuarioController">
+
+    <VBox fx:id="cabecera" spacing="4.0">
+        <padding><Insets bottom="20.0" left="30.0" right="30.0" top="24.0"/></padding>
+        <Label fx:id="titulo" text="Panel de usuario"/>
+        <Label fx:id="sesion"/>
+    </VBox>
+
+    <VBox fx:id="cuerpo" alignment="CENTER" spacing="12.0">
+        <padding><Insets bottom="28.0" left="28.0" right="28.0" top="28.0"/></padding>
+        <Button fx:id="botonTemario" prefWidth="320.0" text="Consultar temario" onAction="#onTemario"/>
+        <Button fx:id="botonPerfil" prefWidth="320.0" text="Actualizar mi perfil" onAction="#onPerfil"/>
+        <Button fx:id="botonValoraciones" prefWidth="320.0" text="Valorar cursos" onAction="#onValoraciones"/>
+        <Button fx:id="botonMatriculas" prefWidth="320.0" text="Consultar mis matrículas" onAction="#onMatriculas"/>
+        <Button fx:id="botonBaja" prefWidth="320.0" text="Darme de baja de un curso" onAction="#onBaja"/>
+        <Button fx:id="botonEliminar" prefWidth="320.0" text="Eliminar mi cuenta" onAction="#onEliminar"/>
+        <Button fx:id="botonSalir" prefWidth="320.0" text="Cerrar sesión" onAction="#onSalir"/>
+    </VBox>
+</VBox>

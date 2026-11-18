@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="contenido" prefHeight="350.0" prefWidth="450.0" spacing="20.0"
+      xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.mycompany.reto1_erandio_academy.vista.EliminarCuentaController">
+
+    <padding><Insets bottom="30.0" left="30.0" right="30.0" top="30.0"/></padding>
+
+    <Label fx:id="titulo" text="ELIMINAR CUENTA"/>
+
+    <VBox fx:id="bloqueAdmin" spacing="10.0" visible="false" managed="false">
+        <Label text="Seleccionar usuario:"/>
+        <ComboBox fx:id="comboUsuarios" prefWidth="300.0"/>
+    </VBox>
+
+    <VBox fx:id="bloquePropio" spacing="10.0" visible="false" managed="false">
+        <Label text="Vas a eliminar tu propia cuenta:"/>
+        <Label fx:id="etiquetaNombre"/>
+        <Label fx:id="etiquetaEmail"/>
+    </VBox>
+
+    <Button fx:id="botonEliminar" text="Eliminar cuenta" onAction="#onEliminar"/>
+</VBox>
