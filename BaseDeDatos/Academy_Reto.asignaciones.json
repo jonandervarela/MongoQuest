@@ -1,0 +1,44 @@
+[{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a655"
+  },
+  "empleadoId": {
+    "$oid": "6afe028673933342f7e4a63c"
+  },
+  "cursoId": {
+    "$oid": "6afe028673933342f7e4a647"
+  }
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a656"
+  },
+  "empleadoId": {
+    "$oid": "6afe028673933342f7e4a63d"
+  },
+  "cursoId": {
+    "$oid": "6afe028673933342f7e4a648"
+  }
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a657"
+  },
+  "empleadoId": {
+    "$oid": "6afe028673933342f7e4a63e"
+  },
+  "cursoId": {
+    "$oid": "6afe028673933342f7e4a649"
+  }
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a658"
+  },
+  "empleadoId": {
+    "$oid": "6afe028673933342f7e4a63c"
+  },
+  "cursoId": {
+    "$oid": "6afe028673933342f7e4a64a"
+  }
+}]

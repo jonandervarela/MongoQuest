@@ -1,0 +1,160 @@
+[{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a63f"
+  },
+  "nombre": "Laura Fernández Ruiz",
+  "email": "admin@erandioacademy.example",
+  "password": "3d22337bca3cc57591ef97449f188cf95163ad0d43abae86843da37fd87a7a4d",
+  "telefono": "600000001",
+  "rol": "ADMIN",
+  "empleadoId": {
+    "$oid": "6afe028673933342f7e4a63b"
+  },
+  "perfil": {
+    "nivel": "Administración",
+    "intereses": [
+      "Gestión académica",
+      "Organización"
+    ],
+    "biografia": "Responsable de la gestión de ErandioAcademy."
+  }
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a640"
+  },
+  "nombre": "David Pérez Martín",
+  "email": "david.perez@erandioacademy.example",
+  "password": "3d22337bca3cc57591ef97449f188cf95163ad0d43abae86843da37fd87a7a4d",
+  "telefono": "600000002",
+  "rol": "EMPLEADO",
+  "empleadoId": {
+    "$oid": "6afe028673933342f7e4a63c"
+  },
+  "perfil": {
+    "nivel": "Profesor",
+    "intereses": [
+      "Java",
+      "Programación orientada a objetos"
+    ],
+    "biografia": "Imparte formación de Java y fundamentos de programación."
+  }
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a641"
+  },
+  "nombre": "Marta Gómez Etxebarria",
+  "email": "marta.gomez@erandioacademy.example",
+  "password": "3d22337bca3cc57591ef97449f188cf95163ad0d43abae86843da37fd87a7a4d",
+  "telefono": "600000003",
+  "rol": "EMPLEADO",
+  "empleadoId": {
+    "$oid": "6afe028673933342f7e4a63d"
+  },
+  "perfil": {
+    "nivel": "Profesora",
+    "intereses": [
+      "Python",
+      "Automatización"
+    ],
+    "biografia": "Imparte cursos de Python y resolución de problemas."
+  }
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a642"
+  },
+  "nombre": "Javier Sánchez López",
+  "email": "javier.sanchez@erandioacademy.example",
+  "password": "3d22337bca3cc57591ef97449f188cf95163ad0d43abae86843da37fd87a7a4d",
+  "telefono": "600000004",
+  "rol": "EMPLEADO",
+  "empleadoId": {
+    "$oid": "6afe028673933342f7e4a63e"
+  },
+  "perfil": {
+    "nivel": "Profesor",
+    "intereses": [
+      "MongoDB",
+      "Bases de datos"
+    ],
+    "biografia": "Imparte formación de bases de datos y MongoDB."
+  }
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a643"
+  },
+  "nombre": "Ane López García",
+  "email": "ane.lopez@example.com",
+  "password": "3d22337bca3cc57591ef97449f188cf95163ad0d43abae86843da37fd87a7a4d",
+  "telefono": "600000005",
+  "rol": "USUARIO",
+  "empleadoId": null,
+  "perfil": {
+    "nivel": "Principiante",
+    "intereses": [
+      "Java",
+      "Desarrollo de aplicaciones"
+    ],
+    "biografia": "Alumna interesada en aprender programación desde cero."
+  }
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a644"
+  },
+  "nombre": "Unai Ruiz Martín",
+  "email": "unai.ruiz@example.com",
+  "password": "3d22337bca3cc57591ef97449f188cf95163ad0d43abae86843da37fd87a7a4d",
+  "telefono": "600000006",
+  "rol": "USUARIO",
+  "empleadoId": null,
+  "perfil": {
+    "nivel": "Intermedio",
+    "intereses": [
+      "Python",
+      "Automatización"
+    ],
+    "biografia": "Alumno con conocimientos básicos de programación."
+  }
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a645"
+  },
+  "nombre": "Nerea Díaz Alonso",
+  "email": "nerea.diaz@example.com",
+  "password": "3d22337bca3cc57591ef97449f188cf95163ad0d43abae86843da37fd87a7a4d",
+  "telefono": "600000007",
+  "rol": "USUARIO",
+  "empleadoId": null,
+  "perfil": {
+    "nivel": "Principiante",
+    "intereses": [
+      "Bases de datos",
+      "MongoDB"
+    ],
+    "biografia": "Alumna interesada en aprender bases de datos."
+  }
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a646"
+  },
+  "nombre": "Iker Moreno García",
+  "email": "iker.moreno@example.com",
+  "password": "3d22337bca3cc57591ef97449f188cf95163ad0d43abae86843da37fd87a7a4d",
+  "telefono": "600000008",
+  "rol": "USUARIO",
+  "empleadoId": null,
+  "perfil": {
+    "nivel": "Intermedio",
+    "intereses": [
+      "JavaFX",
+      "Interfaces gráficas"
+    ],
+    "biografia": "Alumno interesado en el desarrollo de aplicaciones de escritorio."
+  }
+}]

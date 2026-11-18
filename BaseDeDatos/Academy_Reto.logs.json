@@ -1,0 +1,78 @@
+[{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a666"
+  },
+  "fecha": {
+    "$date": "2026-11-17T09:15:00.000Z"
+  },
+  "usuario": "admin@erandioacademy.example",
+  "tipoOperacion": "LOGIN",
+  "coleccion": "usuarios",
+  "resultado": "OK",
+  "error": null
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a667"
+  },
+  "fecha": {
+    "$date": "2026-11-17T09:20:00.000Z"
+  },
+  "usuario": "admin@erandioacademy.example",
+  "tipoOperacion": "CONSULTA",
+  "coleccion": "cursos",
+  "resultado": "OK",
+  "error": null
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a668"
+  },
+  "fecha": {
+    "$date": "2026-11-17T10:05:00.000Z"
+  },
+  "usuario": "david.perez@erandioacademy.example",
+  "tipoOperacion": "INSERT",
+  "coleccion": "tareas",
+  "resultado": "OK",
+  "error": null
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a669"
+  },
+  "fecha": {
+    "$date": "2026-11-17T10:30:00.000Z"
+  },
+  "usuario": "unai.ruiz@example.com",
+  "tipoOperacion": "INSERT",
+  "coleccion": "entregas",
+  "resultado": "OK",
+  "error": null
+},
+{
+  "_id": {
+    "$oid": "6afe086214fdc34511d8c5e3"
+  },
+  "fecha": {
+    "$date": "2026-11-18T20:19:46.580Z"
+  },
+  "usuario": "Laura Fernández Ruiz",
+  "tipoOperacion": "LOGIN",
+  "coleccion": "usuarios",
+  "resultado": "OK",
+  "error": null
+},
+{
+  "_id": {
+    "$oid": "6afe09a6c1bceb6c3f9343ef"
+  },
+  "fecha": {
+    "$date": "2026-11-18T20:25:10.778Z"
+  },
+  "usuario": "Laura Fernández Ruiz",
+  "tipoOperacion": "LOGIN",
+  "coleccion": "usuarios",
+  "resultado": "OK",
+  "error": null
+}]

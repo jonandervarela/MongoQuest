@@ -1,0 +1,52 @@
+[{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a662"
+  },
+  "usuarioId": {
+    "$oid": "6afe028673933342f7e4a643"
+  },
+  "cursoId": {
+    "$oid": "6afe028673933342f7e4a647"
+  },
+  "puntuacion": 5,
+  "comentario": "Las explicaciones son claras y los ejercicios ayudan a practicar."
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a663"
+  },
+  "usuarioId": {
+    "$oid": "6afe028673933342f7e4a644"
+  },
+  "cursoId": {
+    "$oid": "6afe028673933342f7e4a648"
+  },
+  "puntuacion": 4,
+  "comentario": "Curso práctico y bien organizado. Me gustaría tener algún ejercicio más."
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a664"
+  },
+  "usuarioId": {
+    "$oid": "6afe028673933342f7e4a645"
+  },
+  "cursoId": {
+    "$oid": "6afe028673933342f7e4a649"
+  },
+  "puntuacion": 5,
+  "comentario": "He aprendido a organizar documentos y realizar consultas en MongoDB."
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a665"
+  },
+  "usuarioId": {
+    "$oid": "6afe028673933342f7e4a646"
+  },
+  "cursoId": {
+    "$oid": "6afe028673933342f7e4a64a"
+  },
+  "puntuacion": 4,
+  "comentario": "Las prácticas de interfaces gráficas son útiles y fáciles de seguir."
+}]

@@ -1,0 +1,62 @@
+[{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a647"
+  },
+  "titulo": "Java desde cero",
+  "descripcion": "Curso presencial de fundamentos de Java y programación orientada a objetos.",
+  "duracion": "60 horas",
+  "activo": true,
+  "actividadIds": [
+    {
+      "$oid": "6afe028673933342f7e4a64b"
+    },
+    {
+      "$oid": "6afe028673933342f7e4a64c"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a648"
+  },
+  "titulo": "Python práctico",
+  "descripcion": "Curso presencial de Python con ejercicios de programación y resolución de problemas.",
+  "duracion": "40 horas",
+  "activo": true,
+  "actividadIds": [
+    {
+      "$oid": "6afe028673933342f7e4a64d"
+    },
+    {
+      "$oid": "6afe028673933342f7e4a64e"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a649"
+  },
+  "titulo": "Bases de datos con MongoDB",
+  "descripcion": "Diseño de colecciones, documentos, consultas, índices y validaciones.",
+  "duracion": "30 horas",
+  "activo": true,
+  "actividadIds": [
+    {
+      "$oid": "6afe028673933342f7e4a64f"
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a64a"
+  },
+  "titulo": "Desarrollo de interfaces con JavaFX",
+  "descripcion": "Creación de aplicaciones de escritorio con JavaFX y Scene Builder.",
+  "duracion": "35 horas",
+  "activo": true,
+  "actividadIds": [
+    {
+      "$oid": "6afe028673933342f7e4a650"
+    }
+  ]
+}]

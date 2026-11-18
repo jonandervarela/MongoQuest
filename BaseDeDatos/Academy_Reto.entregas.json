@@ -1,0 +1,64 @@
+[{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a65e"
+  },
+  "tareaId": {
+    "$oid": "6afe028673933342f7e4a651"
+  },
+  "usuarioId": {
+    "$oid": "6afe028673933342f7e4a643"
+  },
+  "estado": "ENTREGADA",
+  "contenido": "He creado la clase Alumno con los atributos nombre y edad. También he añadido un constructor y métodos get y set para consultar y modificar los datos.",
+  "fechaEntrega": "2026-11-15",
+  "nota": null,
+  "comentario": null
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a65f"
+  },
+  "tareaId": {
+    "$oid": "6afe028673933342f7e4a652"
+  },
+  "usuarioId": {
+    "$oid": "6afe028673933342f7e4a644"
+  },
+  "estado": "PENDIENTE",
+  "contenido": null,
+  "fechaEntrega": null,
+  "nota": null,
+  "comentario": null
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a660"
+  },
+  "tareaId": {
+    "$oid": "6afe028673933342f7e4a653"
+  },
+  "usuarioId": {
+    "$oid": "6afe028673933342f7e4a645"
+  },
+  "estado": "CORREGIDA",
+  "contenido": "Una colección agrupa documentos relacionados. Un documento almacena los datos de un elemento en formato BSON, con campos y valores.",
+  "fechaEntrega": "2026-11-14",
+  "nota": 9,
+  "comentario": "Respuesta clara y correcta."
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a661"
+  },
+  "tareaId": {
+    "$oid": "6afe028673933342f7e4a654"
+  },
+  "usuarioId": {
+    "$oid": "6afe028673933342f7e4a646"
+  },
+  "estado": "ENTREGADA",
+  "contenido": "He diseñado una ventana de registro con campos de nombre, correo y contraseña, y un botón para enviar el formulario.",
+  "fechaEntrega": "2026-11-16",
+  "nota": null,
+  "comentario": null
+}]

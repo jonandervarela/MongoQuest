@@ -1,0 +1,99 @@
+[{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a64b"
+  },
+  "titulo": "Fundamentos de Java",
+  "descripcion": "Variables, tipos de datos, operadores y estructuras de control.",
+  "cursoId": {
+    "$oid": "6afe028673933342f7e4a647"
+  },
+  "ejercicios": [
+    {
+      "pregunta": "Declara una variable entera y muestra su valor."
+    },
+    {
+      "pregunta": "Escribe una condición que indique si un número es par."
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a64c"
+  },
+  "titulo": "Programación orientada a objetos",
+  "descripcion": "Clases, objetos, atributos, métodos y encapsulación.",
+  "cursoId": {
+    "$oid": "6afe028673933342f7e4a647"
+  },
+  "ejercicios": [
+    {
+      "pregunta": "Crea una clase Alumno con atributos nombre y edad."
+    },
+    {
+      "pregunta": "Explica para qué sirven los métodos getters y setters."
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a64d"
+  },
+  "titulo": "Fundamentos de Python",
+  "descripcion": "Variables, tipos de datos, condicionales y bucles.",
+  "cursoId": {
+    "$oid": "6afe028673933342f7e4a648"
+  },
+  "ejercicios": [
+    {
+      "pregunta": "Escribe un programa que indique si un número es par."
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a64e"
+  },
+  "titulo": "Funciones y colecciones",
+  "descripcion": "Definición de funciones y uso de listas y diccionarios.",
+  "cursoId": {
+    "$oid": "6afe028673933342f7e4a648"
+  },
+  "ejercicios": [
+    {
+      "pregunta": "Crea una función que calcule la media de una lista de notas."
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a64f"
+  },
+  "titulo": "Introducción a MongoDB",
+  "descripcion": "Bases de datos, colecciones, documentos y consultas básicas.",
+  "cursoId": {
+    "$oid": "6afe028673933342f7e4a649"
+  },
+  "ejercicios": [
+    {
+      "pregunta": "Explica la diferencia entre una colección y un documento."
+    },
+    {
+      "pregunta": "Escribe una consulta para buscar alumnos por nombre."
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a650"
+  },
+  "titulo": "Primeras interfaces con JavaFX",
+  "descripcion": "Ventanas, controles, eventos y organización de interfaces.",
+  "cursoId": {
+    "$oid": "6afe028673933342f7e4a64a"
+  },
+  "ejercicios": [
+    {
+      "pregunta": "Diseña una ventana con un campo de texto y un botón."
+    }
+  ]
+}]

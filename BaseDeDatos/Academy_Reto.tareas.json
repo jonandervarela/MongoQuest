@@ -1,0 +1,52 @@
+[{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a651"
+  },
+  "titulo": "Crear una clase Alumno",
+  "empleadoId": {
+    "$oid": "6afe028673933342f7e4a63c"
+  },
+  "cursoId": {
+    "$oid": "6afe028673933342f7e4a647"
+  },
+  "fechaLimite": "2026-12-05"
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a652"
+  },
+  "titulo": "Programa de cálculo de notas",
+  "empleadoId": {
+    "$oid": "6afe028673933342f7e4a63d"
+  },
+  "cursoId": {
+    "$oid": "6afe028673933342f7e4a648"
+  },
+  "fechaLimite": "2026-12-08"
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a653"
+  },
+  "titulo": "Diseñar una colección de cursos",
+  "empleadoId": {
+    "$oid": "6afe028673933342f7e4a63e"
+  },
+  "cursoId": {
+    "$oid": "6afe028673933342f7e4a649"
+  },
+  "fechaLimite": "2026-12-10"
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a654"
+  },
+  "titulo": "Crear una ventana de registro",
+  "empleadoId": {
+    "$oid": "6afe028673933342f7e4a63c"
+  },
+  "cursoId": {
+    "$oid": "6afe028673933342f7e4a64a"
+  },
+  "fechaLimite": "2026-12-12"
+}]

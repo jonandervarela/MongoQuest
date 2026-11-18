@@ -1,0 +1,36 @@
+[{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a63b"
+  },
+  "nombre": "Laura Fernández Ruiz",
+  "puesto": "Administradora",
+  "departamento": "Dirección",
+  "activo": true
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a63c"
+  },
+  "nombre": "David Pérez Martín",
+  "puesto": "Profesor de Java",
+  "departamento": "Formación",
+  "activo": true
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a63d"
+  },
+  "nombre": "Marta Gómez Etxebarria",
+  "puesto": "Profesora de Python",
+  "departamento": "Formación",
+  "activo": true
+},
+{
+  "_id": {
+    "$oid": "6afe028673933342f7e4a63e"
+  },
+  "nombre": "Javier Sánchez López",
+  "puesto": "Profesor de bases de datos",
+  "departamento": "Formación",
+  "activo": true
+}]
