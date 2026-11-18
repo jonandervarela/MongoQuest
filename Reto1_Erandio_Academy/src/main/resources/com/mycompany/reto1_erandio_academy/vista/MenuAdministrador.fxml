@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="raiz" prefWidth="420.0"
+      xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.mycompany.reto1_erandio_academy.vista.MenuAdministradorController">
+
+    <VBox fx:id="cabecera" spacing="4.0">
+        <padding><Insets bottom="20.0" left="30.0" right="30.0" top="24.0"/></padding>
+        <Label fx:id="titulo" text="Panel de administrador"/>
+        <Label fx:id="sesion"/>
+    </VBox>
+
+    <VBox fx:id="cuerpo" alignment="CENTER" spacing="12.0">
+        <padding><Insets bottom="28.0" left="28.0" right="28.0" top="28.0"/></padding>
+        <Button fx:id="botonEmpleados" prefWidth="320.0" text="Gestionar empleados" onAction="#onEmpleados"/>
+        <Button fx:id="botonTareas" prefWidth="320.0" text="Gestionar tareas" onAction="#onTareas"/>
+        <Button fx:id="botonCursos" prefWidth="320.0" text="Gestionar cursos" onAction="#onCursos"/>
+        <Button fx:id="botonAsignaciones" prefWidth="320.0" text="Asignar profesores" onAction="#onAsignaciones"/>
+        <Button fx:id="botonUsuarios" prefWidth="320.0" text="Gestionar usuarios" onAction="#onUsuarios"/>
+        <Button fx:id="botonMatriculas" prefWidth="320.0" text="Gestionar matrículas" onAction="#onMatriculas"/>
+        <Button fx:id="botonActividades" prefWidth="320.0" text="Gestionar actividades" onAction="#onActividades"/>
+        <Button fx:id="botonEmpresa" prefWidth="320.0" text="Datos de la empresa" onAction="#onEmpresa"/>
+        <Button fx:id="botonSalir" prefWidth="320.0" text="Cerrar sesión" onAction="#onSalir"/>
+    </VBox>
+</VBox>

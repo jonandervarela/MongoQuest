@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<HBox fx:id="raiz" prefHeight="500.0" prefWidth="840.0"
+      xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.mycompany.reto1_erandio_academy.vista.LoginController">
+
+    <!-- Panel de marca (izquierda) -->
+    <VBox fx:id="panelMarca" minWidth="340.0" prefWidth="340.0" spacing="18.0">
+        <padding><Insets bottom="48.0" left="48.0" right="48.0" top="48.0"/></padding>
+        <Label fx:id="marca" text="Erandio&#10;Academy" wrapText="true"/>
+        <Region fx:id="linea" maxHeight="4.0" maxWidth="56.0" minHeight="4.0" minWidth="56.0" prefHeight="4.0" prefWidth="56.0"/>
+        <Label fx:id="lema" text="Cursos, tareas y seguimiento del alumnado en un solo sitio." wrapText="true"/>
+    </VBox>
+
+    <!-- Formulario (derecha) -->
+    <VBox fx:id="panelFormulario" alignment="CENTER_LEFT" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" spacing="18.0">
+        <padding><Insets bottom="40.0" left="56.0" right="56.0" top="40.0"/></padding>
+
+        <VBox spacing="4.0">
+            <Label fx:id="titulo" text="Entra en tu cuenta"/>
+            <Label fx:id="ayuda" text="Usa el email con el que te registraste."/>
+        </VBox>
+
+        <VBox spacing="6.0">
+            <Label fx:id="etiquetaEmail" text="Email"/>
+            <TextField fx:id="email" promptText="nombre@correo.com"/>
+        </VBox>
+
+        <VBox spacing="6.0">
+            <Label fx:id="etiquetaPassword" text="Contraseña"/>
+            <PasswordField fx:id="password" promptText="Tu contraseña"/>
+        </VBox>
+
+        <Label fx:id="error" maxWidth="1.7976931348623157E308" visible="false" managed="false" wrapText="true">
+            <padding><Insets bottom="8.0" left="12.0" right="12.0" top="8.0"/></padding>
+        </Label>
+
+        <Button fx:id="entrar" defaultButton="true" maxWidth="1.7976931348623157E308" text="Entrar" onAction="#onEntrar">
+            <padding><Insets bottom="12.0" left="18.0" right="18.0" top="12.0"/></padding>
+        </Button>
+
+        <HBox alignment="CENTER_LEFT" spacing="4.0">
+            <Label fx:id="textoRegistro" text="¿Primera vez aquí?"/>
+            <Hyperlink fx:id="crearCuenta" text="Crear una cuenta" onAction="#onCrearCuenta"/>
+        </HBox>
+    </VBox>
+</HBox>

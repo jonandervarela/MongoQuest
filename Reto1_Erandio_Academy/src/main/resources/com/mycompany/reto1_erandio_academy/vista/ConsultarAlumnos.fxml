@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox fx:id="contenido" prefHeight="650.0" prefWidth="780.0" spacing="10.0"
+      xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.mycompany.reto1_erandio_academy.vista.ConsultarAlumnosController">
+
+    <padding><Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/></padding>
+
+    <Label fx:id="avisoSinCursos" visible="false" managed="false" wrapText="true"
+           text="No tienes ningún curso asignado todavía. Pide al administrador que te asigne uno."/>
+
+    <Label text="Curso:"/>
+    <ComboBox fx:id="cursos" promptText="Selecciona un curso"/>
+
+    <Label fx:id="tituloAlumnos" text="Alumnos matriculados en el curso:"/>
+    <TableView fx:id="tablaAlumnos" prefHeight="180.0">
+        <columns>
+            <TableColumn fx:id="colNombre" text="Nombre"/>
+            <TableColumn fx:id="colEmail" text="Email"/>
+            <TableColumn fx:id="colEstado" text="Matrícula"/>
+            <TableColumn fx:id="colProgreso" text="Progreso %"/>
+        </columns>
+    </TableView>
+
+    <Label fx:id="tituloDetalle" text="Tareas, entregas y valoración del alumno seleccionado:"/>
+    <TableView fx:id="tablaEntregas" prefHeight="160.0">
+        <columns>
+            <TableColumn fx:id="colTarea" text="Tarea"/>
+            <TableColumn fx:id="colFechaLimite" text="Fecha límite"/>
+            <TableColumn fx:id="colEstadoEntrega" text="Entrega"/>
+            <TableColumn fx:id="colFechaEntrega" text="Fecha entrega"/>
+            <TableColumn fx:id="colArchivo" text="Archivo"/>
+        </columns>
+    </TableView>
+
+    <Label fx:id="etiquetaValoracion" wrapText="true"/>
+</VBox>
