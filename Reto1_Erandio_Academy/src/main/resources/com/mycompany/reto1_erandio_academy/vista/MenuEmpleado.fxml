@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane fx:id="raiz" minHeight="650.0" minWidth="950.0" prefHeight="780.0" prefWidth="1150.0"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.mycompany.reto1_erandio_academy.vista.MenuEmpleadoController">
+
+    <left>
+        <VBox fx:id="lateral" minWidth="245.0" prefWidth="245.0" spacing="12.0">
+            <padding><Insets bottom="22.0" left="18.0" right="18.0" top="28.0"/></padding>
+
+            <VBox spacing="2.0">
+                <padding><Insets bottom="25.0" left="8.0" right="8.0"/></padding>
+                <Label fx:id="marca" text="ERANDIO"/>
+                <Label fx:id="subtituloMarca" text="ACADEMY"/>
+            </VBox>
+
+            <Label fx:id="etiquetaMenu" text="MENÚ PRINCIPAL">
+                <padding><Insets bottom="8.0" left="8.0" right="8.0" top="5.0"/></padding>
+            </Label>
+
+            <Button fx:id="menuInicio" maxWidth="1.7976931348623157E308" text="Inicio">
+                <padding><Insets bottom="12.0" left="14.0" right="14.0" top="12.0"/></padding>
+            </Button>
+            <Button fx:id="menuActividades" maxWidth="1.7976931348623157E308" text="Gestionar actividades" onAction="#onActividades">
+                <padding><Insets bottom="12.0" left="14.0" right="14.0" top="12.0"/></padding>
+            </Button>
+            <Button fx:id="menuTareas" maxWidth="1.7976931348623157E308" text="Gestionar tareas" onAction="#onTareas">
+                <padding><Insets bottom="12.0" left="14.0" right="14.0" top="12.0"/></padding>
+            </Button>
+            <Button fx:id="menuTemario" maxWidth="1.7976931348623157E308" text="Consultar temario" onAction="#onTemario">
+                <padding><Insets bottom="12.0" left="14.0" right="14.0" top="12.0"/></padding>
+            </Button>
+            <Button fx:id="menuAlumnos" maxWidth="1.7976931348623157E308" text="Consultar alumnos" onAction="#onAlumnos">
+                <padding><Insets bottom="12.0" left="14.0" right="14.0" top="12.0"/></padding>
+            </Button>
+            <Button fx:id="menuPerfil" maxWidth="1.7976931348623157E308" text="Mi perfil" onAction="#onPerfil">
+                <padding><Insets bottom="12.0" left="14.0" right="14.0" top="12.0"/></padding>
+            </Button>
+
+            <Region fx:id="espacio" VBox.vgrow="ALWAYS"/>
+
+            <VBox fx:id="informacionSesion" spacing="5.0">
+                <padding><Insets bottom="15.0" left="10.0" right="10.0" top="15.0"/></padding>
+                <Label fx:id="usuarioSesion"/>
+                <Label fx:id="rolSesion" text="PROFESOR"/>
+            </VBox>
+
+            <Button fx:id="botonSalir" maxWidth="1.7976931348623157E308" text="Cerrar sesión" onAction="#onSalir">
+                <padding><Insets bottom="12.0" left="14.0" right="14.0" top="12.0"/></padding>
+            </Button>
+        </VBox>
+    </left>
+
+    <center>
+        <ScrollPane fx:id="scroll" fitToWidth="true" hbarPolicy="NEVER" pannable="true" vbarPolicy="AS_NEEDED">
+            <content>
+                <VBox fx:id="zonaCentral">
+
+                    <HBox fx:id="cabecera" alignment="CENTER_LEFT" spacing="20.0">
+                        <padding><Insets bottom="22.0" left="35.0" right="35.0" top="28.0"/></padding>
+                        <VBox spacing="5.0">
+                            <Label fx:id="titulo" text="Panel de empleado"/>
+                            <Label fx:id="descripcion" text="Gestiona tus temas, tareas y alumnos de los cursos que impartes."/>
+                        </VBox>
+                        <Region fx:id="separadorCabecera" HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="inicial" alignment="CENTER" maxHeight="45.0" maxWidth="45.0" minHeight="45.0" minWidth="45.0"/>
+                    </HBox>
+
+                    <VBox fx:id="contenido" fillWidth="true" spacing="22.0">
+                        <padding><Insets bottom="35.0" left="35.0" right="35.0" top="10.0"/></padding>
+
+                        <VBox fx:id="tarjetaBienvenida" spacing="9.0">
+                            <padding><Insets bottom="23.0" left="23.0" right="23.0" top="23.0"/></padding>
+                            <Label fx:id="bienvenida"/>
+                            <Label fx:id="textoBienvenida" wrapText="true"
+                                   text="Desde aquí puedes acceder a todas tus herramientas de profesor."/>
+                        </VBox>
+
+                        <Label fx:id="tituloFunciones" text="Mis herramientas"/>
+
+                        <GridPane fx:id="tarjetas" hgap="18.0" vgap="18.0">
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="ALWAYS" percentWidth="50.0"/>
+                                <ColumnConstraints hgrow="ALWAYS" percentWidth="50.0"/>
+                            </columnConstraints>
+
+                            <VBox fx:id="tarjetaActividades" maxWidth="1.7976931348623157E308" minHeight="155.0" spacing="13.0" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                                <padding><Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/></padding>
+                                <Label fx:id="nombreActividades" text="Gestionar actividades"/>
+                                <Label fx:id="detalleActividades" minHeight="40.0" wrapText="true" text="Crea, modifica y elimina los temas de tus cursos."/>
+                                <Button fx:id="botonActividades" text="Ver actividades" onAction="#onActividades"/>
+                            </VBox>
+
+                            <VBox fx:id="tarjetaTareas" maxWidth="1.7976931348623157E308" minHeight="155.0" spacing="13.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                                <padding><Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/></padding>
+                                <Label fx:id="nombreTareas" text="Gestionar tareas"/>
+                                <Label fx:id="detalleTareas" minHeight="40.0" wrapText="true" text="Crea y revisa las tareas de tus cursos."/>
+                                <Button fx:id="botonTareas" text="Ver tareas" onAction="#onTareas"/>
+                            </VBox>
+
+                            <VBox fx:id="tarjetaTemario" maxWidth="1.7976931348623157E308" minHeight="155.0" spacing="13.0" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                                <padding><Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/></padding>
+                                <Label fx:id="nombreTemario" text="Consultar temario"/>
+                                <Label fx:id="detalleTemario" minHeight="40.0" wrapText="true" text="Accede al contenido y temario de tus cursos."/>
+                                <Button fx:id="botonTemario" text="Ver temario" onAction="#onTemario"/>
+                            </VBox>
+
+                            <VBox fx:id="tarjetaAlumnos" maxWidth="1.7976931348623157E308" minHeight="155.0" spacing="13.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                <padding><Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/></padding>
+                                <Label fx:id="nombreAlumnos" text="Consultar alumnos"/>
+                                <Label fx:id="detalleAlumnos" minHeight="40.0" wrapText="true" text="Consulta los alumnos matriculados en tus cursos."/>
+                                <Button fx:id="botonAlumnos" text="Ver alumnos" onAction="#onAlumnos"/>
+                            </VBox>
+
+                            <VBox fx:id="tarjetaPerfil" maxWidth="1.7976931348623157E308" minHeight="155.0" spacing="13.0" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                                <padding><Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/></padding>
+                                <Label fx:id="nombrePerfil" text="Mi perfil"/>
+                                <Label fx:id="detallePerfil" minHeight="40.0" wrapText="true" text="Consulta tus datos y tu ficha de profesor."/>
+                                <Button fx:id="botonPerfil" text="Ver mi perfil" onAction="#onPerfil"/>
+                            </VBox>
+                        </GridPane>
+                    </VBox>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+</BorderPane>
